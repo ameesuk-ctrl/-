@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบงานที่ 6: TQC/KPI Artifact</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 1. นำเข้า Library สำหรับแปลงหน้าเว็บเป็นรูปภาพ -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1565C0; /* Corporate Blue for Management */
+            --secondary-color: #64B5F6;
+            --bg-color: #E3F2FD; 
+            --border-color: #BBDEFB;
+            --text-color: #0D47A1;
+            --accent-warning: #FFF3E0; /* For Trade-off section */
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eceff1;
+            margin: 0;
+            padding: 20px;
+            color: #263238;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-container {
+            width: 210mm; /* A4 Size */
+            min-height: 297mm;
+            background: white;
+            /* margin: 0 auto; เอาออกเพราะ body จัด center แล้ว */
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #546E7A;
+        }
+
+        /* TQC Grid */
+        .tqc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tqc-box {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+            text-align: center;
+        }
+
+        .tqc-header {
+            font-weight: bold;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .bg-t { background-color: #FF7043; } /* Time - Orange */
+        .bg-q { background-color: #66BB6A; } /* Quality - Green */
+        .bg-c { background-color: #FFA726; } /* Cost - Yellow/Gold */
+
+        /* Table for KPI */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #B0BEC5;
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        td input[type="text"] {
+            width: 95%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        /* Trade-off Section */
+        .trade-off-section {
+            background-color: var(--accent-warning);
+            border: 1px solid #FFE0B2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Reflection */
+        .reflection-section {
+            margin-top: 20px;
+            border-top: 2px dashed var(--border-color);
+            padding-top: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            resize: vertical;
+            margin-top: 5px;
+        }
+
+        /* SMART Checklist */
+        .smart-guide {
+            font-size: 12px;
+            color: #555;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        /* Action Buttons (Floating) */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Sarabun', sans-serif;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+        .btn-print { background-color: var(--primary-color); }
+        .btn-image { background-color: #E65100; /* Orange Accent */ }
+
+        @media print {
+            body { background: white; padding: 0; display: block; }
+            .page-container { box-shadow: none; margin: 0; padding: 20px; width: 100%; }
+            .action-buttons { display: none; } /* ซ่อนปุ่มตอนพิมพ์ */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- กลุ่มปุ่มกด -->
+    <div class="action-buttons">
+        <button class="btn btn-print" onclick="window.print()">
+            🖨️ พิมพ์ / Save PDF
+        </button>
+        <button class="btn btn-image" onclick="saveAsImage()">
+            📸 บันทึกเป็นภาพ
+        </button>
+    </div>
+
+    <!-- ใส่ ID capture-target เพื่อระบุพื้นที่กระดาษ A4 -->
+    <div class="page-container" id="capture-target">
+        <header>
+            <div>
+                <h1>ใบงานที่ 6: TQC/KPI Artifact</h1>
+                <div class="sub-text">การกำหนดตัวชี้วัดและบริหารจัดการคุณภาพ (Quality Control)</div>
+            </div>
+            <div style="text-align: right; font-size: 14px;">
+                <div style="margin-bottom: 5px;">กลุ่มที่: .................................</div>
+                <div>นวัตกรรม: .................................</div>
+            </div>
+        </header>
+
+        <section>
+            <h3 style="color: var(--primary-color); margin-bottom: 10px;">ส่วนที่ 1: เป้าหมาย 3 มิติ (TQC Targets)</h3>
+            <p style="font-size: 13px; margin-bottom: 15px;">ระบุเป้าหมายหลักของนวัตกรรมในแต่ละด้าน (อ้างอิงจากแผน RMI ที่ทำไว้)</p>
+            
+            <div class="tqc-grid">
+                <div class="tqc-box">
+                    <span class="tqc-header bg-t">⏱️ Time (เวลา)</span>
+                    <textarea style="height: 60px; font-size: 12px;" placeholder="เป้าหมายด้านเวลา (เช่น ผลิตเสร็จภายใน... หรือ ความเร็วในการทำงาน...)"></textarea>
+                </div>
+                <div class="tqc-box">
+                    <span class="tqc-header bg-q">⭐ Quality (คุณภาพ)</span>
+                    <textarea style="height: 60px; font-size: 12px;" placeholder="เป้าหมายด้านคุณภาพ (เช่น ความทนทาน, ประสิทธิภาพการบำบัดน้ำ...)"></textarea>
+                </div>
+                <div class="tqc-box">
+                    <span class="tqc-header bg-c">💰 Cost (ต้นทุน)</span>
+                    <textarea style="height: 60px; font-size: 12px;" placeholder="เป้าหมายด้านต้นทุน (เช่น งบประมาณไม่เกิน..., ต้นทุนต่อชิ้น...)"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3 style="color: var(--primary-color); margin-bottom: 10px;">ส่วนที่ 2: ตัวชี้วัดความสำเร็จ (KPI Definition)</h3>
+            <p style="font-size: 13px; margin-bottom: 10px;">แปลงเป้าหมายด้านบน ให้เป็นตัวเลขที่วัดผลได้ ตามหลัก <strong>SMART</strong> (Specific, Measurable, Achievable, Relevant, Time-bound)</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">ด้าน (T/Q/C)</th>
+                        <th style="width: 35%;">ตัวชี้วัด (KPI Name)<br><small>จะวัดอะไร?</small></th>
+                        <th style="width: 25%;">ค่าเป้าหมาย (Target)<br><small>ตัวเลข/หน่วย</small></th>
+                        <th style="width: 15%;">SMART?<br><small>(เช็คถูก)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; color: #FF7043;">Time</td>
+                        <td><input type="text" placeholder="เช่น ระยะเวลาการกรองน้ำ 1 ลิตร"></td>
+                        <td><input type="text" placeholder="เช่น ไม่เกิน 5 นาที"></td>
+                        <td style="text-align: center;"><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; color: #66BB6A;">Quality</td>
+                        <td><input type="text" placeholder="เช่น ความใสของน้ำ (Turbidity)"></td>
+                        <td><input type="text" placeholder="เช่น น้อยกว่า 10 NTU"></td>
+                        <td style="text-align: center;"><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; color: #FFA726;">Cost</td>
+                        <td><input type="text" placeholder="เช่น ต้นทุนวัสดุต่อชิ้น"></td>
+                        <td><input type="text" placeholder="เช่น ไม่เกิน 50 บาท"></td>
+                        <td style="text-align: center;"><input type="checkbox"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="smart-guide">
+                <strong>💡 SMART Check:</strong> 
+                <strong>S</strong>=เจาะจงไหม? 
+                <strong>M</strong>=วัดเป็นตัวเลขได้ไหม? 
+                <strong>A</strong>=ทำได้จริงไหม? 
+                <strong>R</strong>=เกี่ยวข้องกับเป้าหมายไหม? 
+                <strong>T</strong>=มีกรอบเวลาไหม?
+            </div>
+        </section>
+
+        <section class="trade-off-section">
+            <h3 style="color: #E65100; margin-top: 0; font-size: 16px;">⚖️ ส่วนที่ 3: การวิเคราะห์จุดที่ต้องแลก (Trade-off Analysis)</h3>
+            <p style="font-size: 13px;">ในการพัฒนาจริง เรามักทำไม่ได้ดีพร้อมกันทั้ง 3 ด้าน (เช่น อยากได้ของดีมักจะแพง หรืออยากได้เร็วงานอาจไม่เนี๊ยบ)</p>
+            
+            <div style="margin-top: 10px;">
+                <strong style="font-size: 14px;">กลุ่มของคุณเลือกให้ความสำคัญกับด้านใดมากที่สุด (Priority) และยอมลดความสำคัญด้านใด (Sacrifice)?</strong>
+                <textarea style="background-color: white;" placeholder="ตัวอย่าง: เราเน้น Quality (น้ำต้องสะอาดที่สุด) โดยยอมแลกเรื่อง Time (อาจใช้เวลากรองนานหน่อย) เพราะความปลอดภัยของชุมชนสำคัญที่สุด..."></textarea>
+            </div>
+        </section>
+
+        <section class="reflection-section">
+            <h3 style="font-size: 16px; color: var(--text-color);">💭 Mini-Reflection (สะท้อนคิด)</h3>
+            <p style="font-size: 13px;">จากการกำหนด KPI ครั้งนี้ คิดว่าตัวชี้วัดข้อใด <strong>"ท้าทายที่สุด"</strong> ที่จะทำให้สำเร็จตามเป้าหมาย? เพราะเหตุใด?</p>
+            <textarea style="height: 80px;" placeholder="ตอบ: ..."></textarea>
+        </section>
+
+    </div>
+
+    <!-- สคริปต์สำหรับบันทึกภาพ -->
+    <script>
+        function saveAsImage() {
+            // เลือกส่วนที่เป็นกระดาษ A4
+            const element = document.getElementById('capture-target');
+            
+            // ใช้ html2canvas แปลงเป็นภาพ
+            html2canvas(element, {
+                scale: 2, // เพิ่มความละเอียด (Scale 2x) ให้ภาพชัดเมื่อซูม
+                backgroundColor: "#ffffff", // บังคับพื้นหลังสีขาว
+                useCORS: true // รองรับการโหลดภาพข้ามโดเมน (ถ้ามี)
+            }).then(canvas => {
+                // สร้างลิงก์ดาวน์โหลด
+                const link = document.createElement('a');
+                link.download = 'TQC-KPI-Artifact.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Error generating image:", err);
+                alert("ไม่สามารถบันทึกภาพได้ กรุณาลองใหม่อีกครั้ง");
+            });
+        }
+    </script>
+
+</body>
+</html>

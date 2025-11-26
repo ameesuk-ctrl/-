@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียนที่ 3: ธุรกิจและกลยุทธ์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #fff7ed; color: #7c2d12; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .step-arrow { display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fdba74; }
+        .case-badge { background-color: #ffedd5; color: #c2410c; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; border: 1px solid #fdba74; display: inline-block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto p-6 md:p-10">
+        
+        <header class="mb-8 border-b-4 border-orange-500 pb-4">
+            <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-bold">Phase 3: Strategy & Business</span>
+            <h1 class="text-3xl font-bold text-orange-900 mt-2">บทเรียนที่ 3: การวางกลยุทธ์ธุรกิจ</h1>
+            <p class="text-orange-700">วางระบบการผลิต (SIPOC) และแผนธุรกิจ (BMC) เพื่อนำนวัตกรรมสู่ตลาดจริง</p>
+        </header>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-2xl">🔄</div>
+                <h2 class="text-2xl font-bold">1. กระบวนการ (SIPOC)</h2>
+            </div>
+            
+            <div class="card p-6 text-center mb-6">
+                <p class="mb-4 text-left text-sm font-bold text-gray-700">เครื่องมือสำหรับมองภาพรวมกระบวนการทำงานตั้งแต่ต้นน้ำยันปลายน้ำ:</p>
+                <div class="flex flex-wrap justify-center gap-2 text-xs md:text-sm font-bold">
+                    <div class="bg-orange-100 p-3 rounded border border-orange-200">Supplier<br>(ผู้ส่งมอบ)</div> 
+                    <div class="step-arrow">➜</div>
+                    <div class="bg-orange-100 p-3 rounded border border-orange-200">Input<br>(ปัจจัยนำเข้า)</div> 
+                    <div class="step-arrow">➜</div>
+                    <div class="bg-orange-100 p-3 rounded border border-orange-200">Process<br>(กระบวนการ)</div> 
+                    <div class="step-arrow">➜</div>
+                    <div class="bg-orange-100 p-3 rounded border border-orange-200">Output<br>(ผลผลิต)</div> 
+                    <div class="step-arrow">➜</div>
+                    <div class="bg-orange-100 p-3 rounded border border-orange-200">Customer<br>(ลูกค้า)</div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border-l-4 border-orange-500 shadow-sm">
+                <span class="case-badge">💡 Case Study: แผ่นบำบัดน้ำเสียจากใบเหงือกปลาหมอ</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-orange-50/50 p-3 rounded-lg">
+                        <strong class="text-orange-800 block mb-1">Supplier (ต้นน้ำ):</strong>
+                        <ul class="list-disc pl-4 text-gray-600 text-xs">
+                            <li>ชุมชนป่าชายเลน (เก็บใบเหงือกปลาหมอ)</li>
+                            <li>ร้านวัสดุก่อสร้าง (ปูน/ตัวประสาน)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-orange-50/50 p-3 rounded-lg">
+                        <strong class="text-orange-800 block mb-1">Input (วัตถุดิบ):</strong>
+                        <ul class="list-disc pl-4 text-gray-600 text-xs">
+                            <li>ใบเหงือกปลาหมอแก่ (ที่มีสารแทนนิน)</li>
+                            <li>น้ำสะอาด, แม่พิมพ์อัดแผ่น</li>
+                        </ul>
+                    </div>
+                    <div class="md:col-span-2 bg-orange-50 p-4 rounded-lg border border-orange-100">
+                        <strong class="text-orange-800 block mb-2">Process (กระบวนการผลิต):</strong>
+                        <div class="flex flex-wrap gap-2 text-xs text-gray-700">
+                            <span class="bg-white px-2 py-1 rounded border">1. ล้างทำความสะอาดใบ</span> ➜
+                            <span class="bg-white px-2 py-1 rounded border">2. ต้มสกัดสารแทนนิน</span> ➜
+                            <span class="bg-white px-2 py-1 rounded border">3. ผสมตัวประสาน</span> ➜
+                            <span class="bg-white px-2 py-1 rounded border">4. อัดขึ้นรูปแผ่น</span> ➜
+                            <span class="bg-white px-2 py-1 rounded border">5. ตากแห้ง & QC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-2xl">⚔️</div>
+                <h2 class="text-2xl font-bold">2. กลยุทธ์ (TOWS Matrix)</h2>
+            </div>
+            
+            <div class="card p-6 mb-6">
+                <p class="mb-4 text-sm font-bold text-gray-700">การเอาชนะคู่แข่งด้วยการจับคู่ 4 ด้าน (SWOT Matching):</p>
+                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-green-50 p-3 rounded border border-green-200"><strong>SO (เชิงรุก):</strong> ใช้จุดแข็งคว้าโอกาส <br><em class="text-gray-500">"เราเก่ง + ตลาดต้องการ = ลุยเลย"</em></div>
+                    <div class="bg-yellow-50 p-3 rounded border border-yellow-200"><strong>WO (เชิงแก้ไข):</strong> ใช้โอกาสแก้จุดอ่อน <br><em class="text-gray-500">"เราไม่เก่ง แต่มีตัวช่วย = รีบปรับปรุง"</em></div>
+                    <div class="bg-blue-50 p-3 rounded border border-blue-200"><strong>ST (เชิงป้องกัน):</strong> ใช้จุดแข็งกันภัยคุกคาม <br><em class="text-gray-500">"คู่แข่งมาแรง แต่เรามีของดี = ตั้งการ์ดสู้"</em></div>
+                    <div class="bg-red-50 p-3 rounded border border-red-200"><strong>WT (เชิงรับ):</strong> ลดจุดอ่อนเลี่ยงภัย <br><em class="text-gray-500">"สถานการณ์แย่ เราก็แย่ = หนีไปตั้งหลัก"</em></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border-l-4 border-orange-500 shadow-sm">
+                <span class="case-badge">💡 Case Study: กลยุทธ์การตลาด (Opportunities)</span>
+                <div class="space-y-4 text-sm">
+                    <div class="flex gap-3 items-start">
+                        <div class="min-w-[40px] font-bold text-green-600 bg-green-100 text-center rounded p-1">O1</div>
+                        <div>
+                            <strong class="block text-gray-800">เพิ่มมูลค่าให้พืชพื้นถิ่น</strong>
+                            <p class="text-gray-600 text-xs">นำใบเหงือกปลาหมอที่เป็นวัชพืชมาสร้างรายได้ (ต่อยอดเป็นผลิตภัณฑ์อื่นได้)</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <div class="min-w-[40px] font-bold text-green-600 bg-green-100 text-center rounded p-1">O2</div>
+                        <div>
+                            <strong class="block text-gray-800">ระบบบำบัดน้ำเสียขนาดเล็ก</strong>
+                            <p class="text-gray-600 text-xs">ตลาดยังขาดแผ่นกรองราคาถูกสำหรับครัวเรือนหรือบ่อเลี้ยงปลาขนาดเล็ก</p>
+                        </div>
+                    </div>
+                    <div class="bg-orange-50 p-3 rounded border border-orange-100 mt-2">
+                        <strong class="text-orange-800 text-xs uppercase tracking-wide">Strategic Move (SO Strategy):</strong>
+                        <p class="text-gray-700 font-medium">"สร้างแบรนด์สินค้ารักษ์โลกจากภูมิปัญญาท้องถิ่น เจาะกลุ่มตลาด Eco-friendly และชุมชนริมน้ำ"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-2xl">💼</div>
+                <h2 class="text-2xl font-bold">3. โมเดลธุรกิจ (BMC)</h2>
+            </div>
+            
+            <div class="card p-6 grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="mb-3 text-sm font-bold text-gray-700">หลักการสำคัญ:</p>
+                    <ul class="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                        <li><strong>Customer:</strong> ขายให้ใคร?</li>
+                        <li><strong>Value Proposition:</strong> สินค้าเราดีกว่าคนอื่นยังไง?</li>
+                        <li><strong>Revenue:</strong> จะได้เงินทางไหนบ้าง?</li>
+                        <li><strong>Cost:</strong> ต้องจ่ายค่าอะไรบ้าง?</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                    <span class="case-badge mb-2">💡 ตัวอย่าง: โมเดลธุรกิจแผ่นบำบัดน้ำ</span>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex gap-2">
+                            <span class="text-xl">🎁</span> 
+                            <div>
+                                <strong class="block text-orange-900">Value Proposition (คุณค่าหลัก)</strong>
+                                <span class="text-xs text-gray-600">- บำบัดน้ำเสียได้จริง (ลดความขุ่น/BOD)<br>- นำกลับมาใช้ซ้ำได้ (Reusable)<br>- เป็นมิตรต่อสิ่งแวดล้อม</span>
+                            </div>
+                        </li>
+                        <li class="flex gap-2">
+                            <span class="text-xl">👥</span> 
+                            <div>
+                                <strong class="block text-orange-900">Customer (ลูกค้า)</strong>
+                                <span class="text-xs text-gray-600">- ครัวเรือนในพื้นที่น้ำเสีย<br>- เกษตรกรบ่อกุ้ง/ปลา</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="mt-10 pt-6 border-t flex justify-between">
+            <a href="index.html" class="text-gray-500 hover:text-orange-700 flex items-center gap-1">
+                <span>🏠</span> กลับหน้าหลัก
+            </a>
+            <a href="ใบงานที่ 7 SIPOC Template.html" class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 shadow-lg transition transform hover:scale-105 font-bold flex items-center gap-2">
+                เริ่มทำใบงานที่ 7 ➜
+            </a>
+        </div>
+    </div>
+    
+    <script>const audioCtx=new(window.AudioContext||window.webkitAudioContext);function playClick(){if("suspended"===audioCtx.state)audioCtx.resume();const e=audioCtx.createOscillator(),t=audioCtx.createGain();e.frequency.setValueAtTime(600,audioCtx.currentTime),t.gain.exponentialRampToValueAtTime(1e-5,audioCtx.currentTime+.1),e.connect(t),t.connect(audioCtx.destination),e.start(),e.stop(audioCtx.currentTime+.1)}document.querySelectorAll("a, button").forEach(e=>e.addEventListener("click",playClick));</script>
+</body>
+</html>

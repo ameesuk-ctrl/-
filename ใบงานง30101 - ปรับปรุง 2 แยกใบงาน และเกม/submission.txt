@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบส่งงาน - ห้องเรียนนวัตกรรม</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f3f4f6; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        
+        /* Input Styles */
+        .input-field { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb; outline: none; transition: all 0.3s; }
+        .input-field:focus { border-color: #0d9488; background: #fff; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); }
+        
+        /* Checkbox Card */
+        .checkbox-card { display: flex; align-items: center; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .checkbox-card:hover { background-color: #f0fdfa; border-color: #99f6e4; }
+        .checkbox-card input:checked + span { font-weight: bold; color: #0f766e; }
+        
+        /* Tabs & Buttons */
+        .tab-active { border-bottom: 3px solid #0f766e; color: #0f766e; font-weight: bold; background: white; }
+        .tab-inactive { border-bottom: 3px solid transparent; color: #6b7280; background: #f3f4f6; }
+        
+        .file-upload-wrapper { border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #f8fafc; transition: 0.3s; }
+        .file-upload-wrapper:hover { border-color: #0f766e; background: #f0fdfa; }
+
+        .worksheet-btn:hover { background-color: #f3f4f6; padding-left: 1.5rem; transition: all 0.2s; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden transition-opacity opacity-0"></div>
+
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-white shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-30 flex flex-col">
+        <div class="p-6 bg-gradient-to-br from-teal-800 to-teal-600 text-white">
+            <h1 class="text-lg font-bold flex items-center gap-2">📤 ระบบส่งงาน</h1>
+            <p class="text-xs opacity-80">ง30101 | Custom Form</p>
+        </div>
+        <div class="flex-1 py-4 space-y-1 overflow-y-auto">
+            <a href="Index.html" class="worksheet-btn block px-6 py-3 text-gray-600 border-b">🏠 กลับหน้าหลัก</a>
+            <div class="px-6 mt-4"><p class="text-xs font-bold text-gray-400 uppercase">เมนู</p></div>
+            <button onclick="switchTab('form')" class="worksheet-btn w-full text-left px-6 py-3 text-teal-700 bg-teal-50 border-l-4 border-teal-600 font-medium">📝 กรอกข้อมูลส่งงาน</button>
+            <button onclick="switchTab('check')" class="worksheet-btn w-full text-left px-6 py-3 text-blue-700 hover:bg-blue-50 font-medium">🔍 ค้นหาประวัติการส่ง</button>
+            
+            <a href="https://drive.google.com/drive/folders/11I2ZNeYd6W1sPSiwn96n3Fun45BeVYNS?usp=sharing" target="_blank" class="worksheet-btn w-full text-left px-6 py-3 text-gray-500 hover:bg-gray-50 font-medium flex items-center gap-2 mt-2">
+                📂 คลังภาพ (Drive) ↗
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full relative w-full">
+        <header class="bg-white shadow-sm py-2 px-4 flex items-center h-14 lg:hidden z-10 shrink-0">
+            <button onclick="toggleSidebar()" class="p-2 text-gray-600 hover:bg-gray-100 mr-3 rounded"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+            <h2 class="font-bold text-gray-800">ส่งงาน / ตรวจสอบ</h2>
+        </header>
+
+        <div class="flex border-b border-gray-300 shrink-0">
+            <button id="tab-btn-form" onclick="switchTab('form')" class="tab-active flex-1 py-3 text-sm transition-all">✍️ กรอกข้อมูล</button>
+            <button id="tab-btn-check" onclick="switchTab('check')" class="tab-inactive flex-1 py-3 text-sm transition-all">🔍 ค้นหาของฉัน</button>
+        </div>
+
+        <div class="flex-1 relative overflow-hidden bg-gray-50">
+            
+            <div id="content-form" class="w-full h-full overflow-y-auto p-4 md:p-8 pb-20">
+                <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 relative">
+                    <div id="loading-overlay" class="absolute inset-0 z-10 hidden flex-col items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm">
+                        <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-teal-600 mb-3"></div>
+                        <p class="text-teal-800 font-bold animate-pulse">กำลังอัปโหลด...</p>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-teal-900 mb-6 border-l-4 border-teal-500 pl-3">แบบฟอร์มส่งงาน</h2>
+                    
+                    <form id="submitForm" onsubmit="submitData(event)" class="space-y-5">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div><label class="text-sm font-bold text-gray-700">ชื่อ-สกุล *</label><input type="text" name="ชื่อ-สกุล" required class="input-field" placeholder="นายรักเรียน"></div>
+                            <div><label class="text-sm font-bold text-gray-700">อีเมล *</label><input type="email" name="ที่อยู่อีเมล" required class="input-field"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="text-sm font-bold text-gray-700">เลขที่ *</label><input type="number" name="เลขที่" required class="input-field"></div>
+                            <div><label class="text-sm font-bold text-gray-700">ห้อง *</label>
+                                <select name="ห้อง" required class="input-field">
+                                    <option value="">เลือกห้อง</option>
+                                    <option value="ม.6/1">ม.6/1</option>
+                                    <option value="ม.6/2">ม.6/2</option>
+                                    <option value="ม.6/3">ม.6/3</option>
+                                    <option value="ม.6/4">ม.6/4</option>
+                                    <option value="ม.6/5">ม.6/5</option>
+                                    <option value="ม.6/6">ม.6/6</option>
+                                    <option value="ม.6/7">ม.6/7</option>
+                                    <option value="ม.6/8">ม.6/8</option>
+                                    <option value="ม.6/9">ม.6/9</option>
+                                    <option value="ม.6/10">ม.6/10</option>
+                                    <option value="ม.6/11">ม.6/11</option>
+                                    <option value="ม.6/12">ม.6/12</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        
+                        <div>
+                            <label class="text-sm font-bold text-gray-700 mb-2 block">เลือกหัวข้อที่ส่ง (เลือกได้มากกว่า 1)</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto pr-1">
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 1: Empathy" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 1. Empathy</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 2: MPB" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 2. MPB Framework</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 3: CER" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 3. CER Method</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 4: MPD" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 4. MPD Canvas</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 5: RMI" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 5. RMI Matrix</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 6: KPI" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 6. KPI</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 7: SIPOC" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 7. SIPOC</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 8: TOWS" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 8. TOWS</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 9: Poster" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 9. Poster</label>
+                                <label class="checkbox-card"><input type="checkbox" name="ใบงาน 10: BMC" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-teal-600"> 10. BMC</label>
+                                <label class="checkbox-card bg-amber-50 border-amber-200 col-span-1 md:col-span-2">
+                                    <input type="checkbox" name="🏆 ภารกิจพิเศษ:Mangrove Quest" value="✅ ส่งแล้ว" class="mr-2 h-5 w-5 accent-amber-600"> 
+                                    <span class="text-amber-800 font-bold">🏆 ภารกิจพิเศษ: Mangrove Quest</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-bold text-gray-700 mb-2 block">แนบไฟล์รูปภาพผลงาน *</label>
+                            <div class="file-upload-wrapper" onclick="document.getElementById('fileInput').click()">
+                                <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                                <div id="uploadText">
+                                    <span class="text-3xl">📷</span><br>
+                                    <span class="text-sm text-gray-500">คลิกเพื่อเลือกรูปภาพ (.png / .jpg)</span>
+                                </div>
+                                <div id="filePreview" class="hidden flex items-center gap-3 justify-center">
+                                    <span class="text-2xl">📄</span>
+                                    <span id="fileName" class="text-sm font-bold text-teal-700 truncate max-w-[200px]"></span>
+                                    <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">พร้อมอัปโหลด</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-teal-700 to-teal-600 text-white font-bold py-3 rounded-lg shadow hover:shadow-lg transition transform active:scale-95">
+                            🚀 ยืนยันการส่งงาน
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="content-check" class="w-full h-full overflow-y-auto p-4 md:p-8 hidden">
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-white rounded-xl shadow-sm border border-blue-100 p-6 mb-6">
+                        <h3 class="text-lg font-bold text-blue-900 mb-4">🔍 ค้นหาข้อมูลการส่งงาน</h3>
+                        <div class="flex gap-2">
+                            <input type="text" id="searchInput" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 outline-none focus:border-blue-500" placeholder="พิมพ์ชื่อ หรือ เลขที่...">
+                            <button onclick="searchStudent()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">ค้นหา</button>
+                        </div>
+                    </div>
+                    <div id="searchLoading" class="hidden text-center py-10"><div class="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-blue-600 mx-auto"></div><p>กำลังค้นหา...</p></div>
+                    <div id="searchResult" class="hidden"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 🔴 URL Apps Script ล่าสุดของคุณ
+        const SCRIPT_URL = 'https://script.google.com/a/macros/swpk.ac.th/s/AKfycbxP-h1GIWabDD3GmUuCYzy7u1eGOVk0VRX3HFOYtdwRstpbJ9JEn9_agAs4W7988Gotkg/exec'; 
+        
+        let fileBase64 = "", fileMimeType = "", fileNameOriginal = "";
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('uploadText').classList.add('hidden');
+                document.getElementById('filePreview').classList.remove('hidden');
+                document.getElementById('fileName').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileBase64 = e.target.result.split(',')[1];
+                    fileMimeType = file.type;
+                    fileNameOriginal = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitData(e) {
+            e.preventDefault();
+            const form = document.getElementById('submitForm');
+            const loading = document.getElementById('loading-overlay');
+            const checked = form.querySelectorAll('input[type="checkbox"]:checked');
+            
+            if (checked.length === 0) { alert("เลือกงานอย่างน้อย 1 ชิ้น"); return; }
+            if (!fileBase64) { alert("กรุณาแนบไฟล์ภาพ"); return; }
+
+            loading.classList.remove('hidden'); loading.classList.add('flex');
+            const formData = new FormData(form);
+            formData.append('fileData', fileBase64);
+            formData.append('mimeType', fileMimeType);
+            formData.append('fileName', fileNameOriginal);
+
+            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData })
+            .then(() => {
+                loading.classList.add('hidden');
+                alert('✅ ส่งงานสำเร็จ! ไฟล์ถูกบันทึกลง Drive แล้ว');
+                form.reset();
+                document.getElementById('uploadText').classList.remove('hidden');
+                document.getElementById('filePreview').classList.add('hidden');
+                fileBase64 = ""; fileNameOriginal = "";
+                switchTab('check');
+            })
+            .catch(err => { console.error(err); loading.classList.add('hidden'); alert('❌ ผิดพลาด'); });
+        }
+
+        async function searchStudent() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('searchResult');
+            const loadingDiv = document.getElementById('searchLoading');
+            if (!query) return;
+
+            resultDiv.innerHTML = ''; resultDiv.classList.add('hidden'); loadingDiv.classList.remove('hidden');
+
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                const student = data.reverse().find(r => String(r['ชื่อ-สกุล']).toLowerCase().includes(query) || String(r['เลขที่']) === query);
+                
+                loadingDiv.classList.add('hidden');
+                if (student) displayResult(student);
+                else { resultDiv.innerHTML = `<div class='text-center text-gray-500 py-4'>❌ ไม่พบข้อมูล</div>`; resultDiv.classList.remove('hidden'); }
+            } catch (e) { console.error(e); loadingDiv.classList.add('hidden'); }
+        }
+
+        function displayResult(data) {
+            // รายการงานต้องตรงกับ Sheet Header เป๊ะๆ
+            const tasks = [
+                "ใบงาน 1: Empathy", "ใบงาน 2: MPB", "ใบงาน 3: CER", "ใบงาน 4: MPD", 
+                "ใบงาน 5: RMI", "ใบงาน 6: KPI", "ใบงาน 7: SIPOC", "ใบงาน 8: TOWS", 
+                "ใบงาน 9: Poster", "ใบงาน 10: BMC", "🏆 ภารกิจพิเศษ:Mangrove Quest"
+            ];
+            let html = '';
+            
+            tasks.forEach(t => {
+                if (data[t]) {
+                    // ตัดคำให้สั้นลงเพื่อการแสดงผลที่สวยงาม
+                    const displayName = t.replace('ใบงาน ','').replace('ภารกิจพิเศษ:','');
+                    html += `<div class="flex items-center gap-3 p-3 bg-green-50 border border-green-100 rounded-lg"><div class="w-6 h-6 bg-green-500 rounded-full text-white flex items-center justify-center text-xs">✓</div><div><p class="text-sm font-bold text-green-800">${displayName}</p></div></div>`;
+                }
+            });
+
+            if(!html) html = "<p class='text-center text-gray-400 col-span-2'>ยังไม่มีรายการส่ง</p>";
+
+            document.getElementById('searchResult').innerHTML = `
+                <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+                    <div class="bg-blue-600 p-4 text-white"><h2 class="text-xl font-bold">${data['ชื่อ-สกุล']}</h2><p class="text-sm">เลขที่ ${data['เลขที่']} | ห้อง ${data['ห้อง']}</p></div>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-2">${html}</div>
+                    ${data['ไฟล์แนบ'] ? `<div class="p-4 border-t text-center"><a href="${data['ไฟล์แนบ']}" target="_blank" class="text-blue-600 underline">📂 ดูไฟล์แนบล่าสุด</a></div>` : ''}
+                </div>
+            `;
+            document.getElementById('searchResult').classList.remove('hidden');
+        }
+
+        function switchTab(tab) {
+            const formDiv = document.getElementById('content-form');
+            const checkDiv = document.getElementById('content-check');
+            const btnForm = document.getElementById('tab-btn-form');
+            const btnCheck = document.getElementById('tab-btn-check');
+
+            if (tab === 'form') {
+                formDiv.classList.remove('hidden'); checkDiv.classList.add('hidden');
+                btnForm.className = 'tab-active flex-1 py-3 text-sm transition-all';
+                btnCheck.className = 'tab-inactive flex-1 py-3 text-sm transition-all';
+            } else {
+                checkDiv.classList.remove('hidden'); formDiv.classList.add('hidden');
+                btnCheck.className = 'tab-active flex-1 py-3 text-sm transition-all';
+                btnForm.className = 'tab-inactive flex-1 py-3 text-sm transition-all';
+            }
+            if(window.innerWidth < 1024) toggleSidebar();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

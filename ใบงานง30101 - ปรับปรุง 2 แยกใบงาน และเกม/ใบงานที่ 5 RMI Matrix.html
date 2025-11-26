@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบงานที่ 5: RMI Matrix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #006064; /* Cyan Dark for Engineering/Structure */
+            --secondary-color: #00BCD4;
+            --bg-color: #E0F7FA; 
+            --border-color: #B2EBF2;
+            --text-color: #263238;
+            
+            /* RMI Colors */
+            --color-r: #FFCCBC; /* Light Red/Orange */
+            --border-r: #D84315;
+            --color-m: #E1BEE7; /* Light Purple */
+            --border-m: #8E24AA;
+            --color-i: #C8E6C9; /* Light Green */
+            --border-i: #2E7D32;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eceff1;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-container {
+            width: 210mm; /* A4 Size */
+            min-height: 297mm;
+            background: white;
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #607D8B;
+        }
+
+        /* Input Style สำหรับ Header */
+        .header-input {
+            border: none;
+            border-bottom: 1px dotted #333;
+            background: transparent;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: bold;
+            width: 200px;
+            padding: 0 5px;
+            text-align: left;
+        }
+        .header-input:focus {
+            outline: none;
+            border-bottom: 1px solid var(--primary-color);
+            background-color: #f0fbfb;
+        }
+
+        /* Review Section */
+        .review-box {
+            background-color: #F5F5F5;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #9E9E9E;
+            font-size: 13px;
+        }
+
+        /* RMI Grid */
+        .rmi-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .rmi-column {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .rmi-header {
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .rmi-body {
+            padding: 10px;
+            min-height: 300px;
+            background: white;
+        }
+
+        .header-r { background-color: var(--border-r); }
+        .header-m { background-color: var(--border-m); }
+        .header-i { background-color: var(--border-i); }
+
+        .body-r { background-color: var(--color-r); }
+        .body-m { background-color: var(--color-m); }
+        .body-i { background-color: var(--color-i); }
+
+        .input-item {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            border: none;
+            resize: none;
+            font-family: 'Sarabun', sans-serif;
+            background: transparent;
+            min-height: 40px;
+            font-size: 13px;
+        }
+        
+        textarea:focus { outline: none; }
+
+        /* Sketch Area */
+        .sketch-section {
+            border: 2px dashed var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            min-height: 150px; /* เปลี่ยนเป็น min-height */
+            display: flex; /* เพิ่ม */
+            flex-direction: column; /* เพิ่ม */
+            align-items: center; /* เพิ่ม */
+            justify-content: center; /* เพิ่ม */
+        }
+        
+        .sketch-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            color: var(--primary-color);
+            font-weight: bold;
+            z-index: 1; /* ให้ label อยู่บนสุด */
+        }
+
+        /* เพิ่ม style สำหรับอัปโหลดรูปภาพ */
+        .image-upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%; /* ให้เต็มพื้นที่ sketch-section */
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .image-placeholder {
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 250px; /* จำกัดความสูงของรูปที่แสดง */
+            display: block;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            background-color: #607D8B; /* Blue Grey */
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            border: none;
+            transition: background-color 0.2s;
+        }
+
+        .btn-upload:hover {
+            background-color: #455A64;
+        }
+
+
+        /* Reflection */
+        .reflection-box {
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+
+        /* Action Buttons (Floating) */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Sarabun', sans-serif;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+        .btn-print { background-color: var(--primary-color); }
+        .btn-image { background-color: #D84315; /* Deep Orange */ }
+
+        @media print {
+            body { background: white; padding: 0; display: block; }
+            .page-container { box-shadow: none; margin: 0; padding: 20px; width: 100%; }
+            .action-buttons { display: none; } /* ซ่อนปุ่มตอนพิมพ์ */
+            .rmi-body { min-height: auto; }
+            /* ให้ input ตอนพิมพ์เห็นสิ่งที่พิมพ์ชัดเจน */
+            .header-input { border-bottom: 1px solid #000; }
+            .uploaded-image { max-height: none; width: auto; height: auto; } /* ตอนพิมพ์ให้แสดงเต็มภาพ */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-buttons">
+        <button class="btn btn-print" onclick="window.print()">
+            🖨️ พิมพ์ / Save PDF
+        </button>
+        <button class="btn btn-image" onclick="saveAsImage()">
+            📸 บันทึกเป็นภาพ
+        </button>
+    </div>
+
+    <div class="page-container" id="capture-target">
+        <header>
+            <div>
+                <h1>ใบงานที่ 5: RMI Matrix</h1>
+                <div class="sub-text">ตารางวิเคราะห์เพื่อการปรับปรุงและพัฒนานวัตกรรม</div>
+            </div>
+            <div style="text-align: right; font-size: 14px;">
+                <div style="margin-bottom: 5px;">
+                    <strong>กลุ่มที่:</strong> 
+                    <input type="text" class="header-input" placeholder="ระบุชื่อ/เลขกลุ่ม...">
+                </div>
+                <div>
+                    <strong>นวัตกรรม:</strong> 
+                    <input type="text" class="header-input" placeholder="ระบุชื่อนวัตกรรม...">
+                </div>
+            </div>
+        </header>
+
+        <div class="review-box">
+            <strong>🔄 ทบทวนจาก MPD Canvas:</strong> ก่อนเริ่มทำ RMI ให้ดูใบงาน MPD เดิมของกลุ่ม
+            มีฟีเจอร์ไหนที่ <em>"ทำยากเกินไป"</em>, <em>"ยังไม่สมบูรณ์"</em> หรือ <em>"น่าจะทำให้ดีกว่านี้ได้"</em> บ้าง?
+        </div>
+
+        <section>
+            <div class="rmi-container">
+                
+                <div class="rmi-column">
+                    <div class="rmi-header header-r">✂️ R - Reduce (ลด)</div>
+                    <div class="rmi-body body-r">
+                        <p style="font-size:12px; text-align:center; margin-top:0;">ลดความซับซ้อน/ลดต้นทุน/ตัดสิ่งไม่จำเป็น</p>
+                        
+                        <div class="input-item">
+                            <span class="input-label">1. สิ่งที่จะลด/ตัดออก:</span>
+                            <textarea placeholder="ระบุส่วนประกอบหรือขั้นตอน..."></textarea>
+                            <hr style="border-top: 1px dashed #aaa; margin: 5px 0;">
+                            <span class="input-label">เหตุผล:</span>
+                            <textarea placeholder="เช่น แพงเกินไป, ลูกค้าไม่ได้ใช้..."></textarea>
+                        </div>
+
+                        <div class="input-item">
+                            <span class="input-label">2. สิ่งที่จะลด/ตัดออก:</span>
+                            <textarea placeholder="..."></textarea>
+                            <hr style="border-top: 1px dashed #aaa; margin: 5px 0;">
+                            <span class="input-label">เหตุ B:</span>
+                            <textarea placeholder="..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rmi-column">
+                    <div class="rmi-header header-m">🔧 M - Modify (ปรับ)</div>
+                    <div class="rmi-body body-m">
+                        <p style="font-size:12px; text-align:center; margin-top:0;">ปรับเปลี่ยนให้เหมาะสม/แก้ไขจุดบกพร่อง</p>
+                        
+                        <div class="input-item">
+                            <span class="input-label">1. สิ่งที่จะปรับเปลี่ยน:</span>
+                            <textarea placeholder="ระบุฟีเจอร์เดิมที่ต้องการแก้..."></textarea>
+                            <hr style="border-top: 1px dashed #aaa; margin: 5px 0;">
+                            <span class="input-label">ปรับอย่างไร:</span>
+                            <textarea placeholder="เช่น เปลี่ยนวัสดุเป็น..., ปรับขนาดให้..."></textarea>
+                        </div>
+
+                        <div class="input-item">
+                            <span class="input-label">2. สิ่งที่จะปรับเปลี่ยน:</span>
+                            <textarea placeholder="..."></textarea>
+                            <hr style="border-top: 1px dashed #aaa; margin: 5px 0;">
+                            <span class="input-label">ปรับอย่างไร:</span>
+                            <textarea placeholder="..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rmi-column">
+                    <div class="rmi-header header-i">🚀 I - Increase (เพิ่ม)</div>
+                    <div class="rmi-body body-i">
+                        <p style="font-size:12px; text-align:center; margin-top:0;">เพิ่มประสิทธิภาพ/เพิ่มฟีเจอร์ใหม่</p>
+                        
+                        <div class="input-item">
+                            <span class="input-label">1. สิ่งที่จะเพิ่มเข้ามา:</span>
+                            <textarea placeholder="ระบุฟังก์ชันใหม่ หรือ Delighters..."></textarea>
+                            <hr style="border-top: 1px dashed #aaa; margin: 5px 0;">
+                            <span class="input-label">ประโยชน์ที่จะได้:</span>
+                            <textarea placeholder="เช่น เพื่อความสะดวกสบายมากขึ้น..."></textarea>
+                        </div>
+
+                        <div class="input-item">
+                            <span class="input-label">2. สิ่งที่จะเพิ่มเข้ามา:</span>
+                            <textarea placeholder="..."></textarea>
+                            <hr style="border-top: 1px dashed #aaa; margin: 5px 0;">
+                            <span class="input-label">ประโยชน์ที่จะได้:</span>
+                            <textarea placeholder="..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="sketch-section">
+            <span class="sketch-label">✏️ ภาพร่างนวัตกรรมหลังปรับปรุง (New Version Sketch)</span>
+            <div class="image-upload-area">
+                <div class="image-placeholder" id="image-placeholder">
+                    (อัปโหลดภาพร่างนวัตกรรมเวอร์ชันใหม่ที่ผ่านกระบวนการ RMI แล้ว พร้อมชี้จุดที่เปลี่ยนแปลง)
+                </div>
+                <img id="uploaded-sketch" class="uploaded-image" src="#" alt="ภาพร่างนวัตกรรม" style="display: none;">
+                <div class="file-input-wrapper">
+                    <button class="btn-upload">เลือกไฟล์รูปภาพ</button>
+                    <input type="file" id="sketch-image-input" accept="image/*">
+                </div>
+            </div>
+        </section>
+
+        <section class="reflection-box">
+            <h3 style="font-size: 16px; margin: 0 0 10px 0; color: var(--primary-color);">🤔 Mini-Reflection (สะท้อนคิด)</h3>
+            <p style="font-size: 13px; margin-bottom: 5px;">
+                การใช้ RMI ช่วยให้กลุ่มของคุณมองเห็น <strong>"ความคุ้มค่า"</strong> (เช่น ลดต้นทุนแต่ได้งานดีขึ้น) ได้อย่างไร?
+                และส่วนไหนของการตัดสินใจ (Reduce/Modify/Increase) ที่ยากที่สุด?
+            </p>
+            <textarea style="width: 100%; height: 60px; border: 1px solid #ccc; padding: 5px; background: #fafafa;" placeholder="คำตอบ: ..."></textarea>
+        </section>
+        
+        <div style="margin-top: 10px; text-align: right; font-size: 12px; color: #777;">
+            เพื่อนผู้ประเมิน (Peer Review): ...........................................................
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sketchImageInput = document.getElementById('sketch-image-input');
+            const uploadedSketch = document.getElementById('uploaded-sketch');
+            const imagePlaceholder = document.getElementById('image-placeholder');
+
+            sketchImageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedSketch.src = e.target.result;
+                        uploadedSketch.style.display = 'block'; // แสดงรูปภาพ
+                        imagePlaceholder.style.display = 'none'; // ซ่อน placeholder
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    uploadedSketch.src = '#';
+                    uploadedSketch.style.display = 'none'; // ซ่อนรูปภาพถ้าไม่มีไฟล์
+                    imagePlaceholder.style.display = 'block'; // แสดง placeholder
+                }
+            });
+        });
+
+        function saveAsImage() {
+            const element = document.getElementById('capture-target');
+            
+            // ใช้ html2canvas แปลงเป็นภาพ
+            html2canvas(element, {
+                scale: 2, 
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                // กำหนด ignoreElements เพื่อไม่ให้ปุ่มอัปโหลดติดไปในรูป (ถ้าจำเป็น)
+                ignoreElements: (element) => {
+                    return element.classList.contains('file-input-wrapper');
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'RMI-Matrix-Worksheet.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Error generating image:", err);
+                alert("ไม่สามารถบันทึกภาพได้ กรุณาลองใหม่อีกครั้ง");
+            });
+        }
+    </script>
+
+</body>
+</html>

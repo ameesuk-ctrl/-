@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียนที่ 1: การถอดรหัสธรรมชาติ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #f0fdfa; color: #134e4a; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .highlight-box { background-color: #ccfbf1; border-left: 4px solid #0f766e; padding: 1rem; border-radius: 4px; }
+        .tree-node { background-color: #ecfdf5; border: 1px solid #10b981; padding: 8px 12px; border-radius: 8px; text-align: center; font-size: 0.9rem; font-weight: bold; color: #065f46; }
+        .tree-arrow { display: flex; justify-content: center; align-items: center; color: #9ca3af; padding: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto p-6 md:p-10">
+        
+        <header class="mb-8 border-b-4 border-teal-500 pb-4">
+            <span class="bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-bold">Phase 1: Discovery</span>
+            <h1 class="text-3xl font-bold text-teal-900 mt-2">บทเรียนที่ 1: การถอดรหัสธรรมชาติ</h1>
+            <p class="text-teal-700">เตรียมความพร้อมก่อนทำใบงานที่ 1, 2 และ 3</p>
+        </header>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-2xl">🧠</div>
+                <h2 class="text-2xl font-bold">1. เข้าใจปัญหา (Empathy)</h2>
+            </div>
+            
+            <div class="card p-6 border border-teal-100 mb-6">
+                <p class="mb-4">ก่อนจะสร้างนวัตกรรม เราต้อง "**เข้าใจ**" ผู้ใช้งานและปัญหาก่อน โดยการถามคำถาม **5W1H**:</p>
+                <ul class="grid md:grid-cols-2 gap-3 text-sm">
+                    <li class="bg-gray-50 p-3 rounded"><strong>Who:</strong> ใครคือคนที่มีปัญหา?</li>
+                    <li class="bg-gray-50 p-3 rounded"><strong>What:</strong> ปัญหาคืออะไร?</li>
+                    <li class="bg-gray-50 p-3 rounded"><strong>Where:</strong> เกิดขึ้นที่ไหน?</li>
+                    <li class="bg-gray-50 p-3 rounded"><strong>When:</strong> เกิดขึ้นเมื่อไหร่?</li>
+                    <li class="bg-gray-50 p-3 rounded"><strong>Why:</strong> ทำไมถึงเป็นปัญหา (รากเหง้า)?</li>
+                    <li class="bg-gray-50 p-3 rounded"><strong>How:</strong> ปัจจุบันเขาแก้ไขอย่างไร?</li>
+                </ul>
+            </div>
+
+            <div class="card p-6 border border-teal-100 mb-8 bg-white shadow-sm">
+                <h3 class="text-lg font-bold text-teal-800 mb-4 border-l-4 border-teal-500 pl-3">1.2 วิธีการวิเคราะห์ Empathy Map</h3>
+                <p class="mb-4 text-sm text-gray-700">เครื่องมือ **Empathy Map** ช่วยให้เราเข้าใจลูกค้าอย่างเป็นระบบ ผ่านมุมมองหลัก 6 ด้าน เพื่อค้นหาปัญหาและความต้องการที่แท้จริง:</p>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-teal-50 p-3 rounded-lg border-b-2 border-teal-300">
+                        <strong class="text-teal-700 block">👀 SEE (สิ่งที่เห็น)</strong>
+                        <p class="text-xs text-gray-600">สิ่งที่ลูกค้ามองเห็นในสิ่งแวดล้อมรอบตัว (ปัญหา, คู่แข่ง, โฆษณา)</p>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-lg border-b-2 border-teal-300">
+                        <strong class="text-teal-700 block">👂 HEAR (สิ่งที่ได้ยิน)</strong>
+                        <p class="text-xs text-gray-600">สิ่งที่ลูกค้าได้ยินจากคนรอบข้าง สื่อ หรือแหล่งข้อมูลต่างๆ</p>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-lg border-b-2 border-teal-300">
+                        <strong class="text-teal-700 block">🗣️ SAY (สิ่งที่พูด)</strong>
+                        <p class="text-xs text-gray-600">คำพูด ข้อความ หรือสิ่งที่ลูกค้าพูดออกมาเกี่ยวกับผลิตภัณฑ์/ปัญหา</p>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-lg border-b-2 border-teal-300">
+                        <strong class="text-teal-700 block">✋ DO (สิ่งที่ทำ)</strong>
+                        <p class="text-xs text-gray-600">การกระทำจริงที่แสดงออกมา (อาจขัดแย้งกับสิ่งที่พูด)</p>
+                    </div>
+                    <div class="bg-teal-100 p-3 rounded-lg border-b-2 border-teal-400">
+                        <strong class="text-teal-800 block">🧠 THINK & FEEL (คิด/รู้สึก)</strong>
+                        <p class="text-xs text-gray-700">สิ่งที่อยู่ในใจ ความกังวล ความกลัว หรือแรงบันดาลใจ (ข้อมูลเชิงลึก)</p>
+                    </div>
+                    <div class="bg-teal-100 p-3 rounded-lg border-b-2 border-teal-400">
+                        <strong class="text-teal-800 block">⚡ PAIN / 💎 GAIN</strong>
+                        <p class="text-xs text-gray-700">สรุปอุปสรรคที่ต้องแก้ไข (Pain) และผลประโยชน์ที่ลูกค้าต้องการ (Gain)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-6 border-l-4 border-amber-400 bg-white shadow-md">
+                <h3 class="text-lg font-bold text-amber-800 mb-4 flex items-center gap-2">
+                    💡 ตัวอย่าง: การวิเคราะห์ปัญหา (Case Study)
+                </h3>
+
+                <div class="bg-amber-50 p-4 rounded-lg mb-4 flex items-start gap-4">
+                    <div class="text-4xl">👤</div>
+                    <div>
+                        <strong class="block text-gray-800 text-sm font-bold uppercase">กลุ่มเป้าหมาย (Persona)</strong>
+                        <p class="text-sm text-gray-700">ป้าแดง แม่ค้ารถเข็นไก่ทอด อายุ 50 ปี ขายทุกวัน 16.00-22.00 น.</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="border border-gray-100 rounded p-3 hover:bg-gray-50">
+                        <strong class="text-teal-700 text-xs flex items-center gap-1">👀 SEE (สิ่งที่เห็น)</strong>
+                        <p class="text-xs text-gray-600 mt-1">เห็นคราบน้ำมันดำๆ บนพื้น, เห็นท่อระบายน้ำตัน</p>
+                    </div>
+                    <div class="border border-gray-100 rounded p-3 hover:bg-gray-50">
+                        <strong class="text-teal-700 text-xs flex items-center gap-1">👂 HEAR (สิ่งที่ได้ยิน)</strong>
+                        <p class="text-xs text-gray-600 mt-1">ได้ยินป้าบ่นว่า 'เทศกิจมาตรวจอีกแล้ว', ลูกค้าบ่น 'เหม็นจัง'</p>
+                    </div>
+                    <div class="border border-gray-100 rounded p-3 hover:bg-gray-50">
+                        <strong class="text-teal-700 text-xs flex items-center gap-1">✋ DO (สิ่งที่เขาทำ)</strong>
+                        <p class="text-xs text-gray-600 mt-1">แอบเทน้ำมันลงท่อตอนดึก, เอาถุงพลาสติกมารอง</p>
+                    </div>
+                    <div class="border border-gray-100 rounded p-3 hover:bg-gray-50">
+                        <strong class="text-teal-700 text-xs flex items-center gap-1">🗣️ SAY (สิ่งที่เขาพูด)</strong>
+                        <p class="text-xs text-gray-600 mt-1">'ไม่รู้จะเอาไปทิ้งไหน มันหนัก', 'ถังดักมันแพง'</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                        <h4 class="font-bold text-red-800 text-sm mb-2 flex items-center gap-1">⚡ Pain Point Analysis</h4>
+                        <ul class="space-y-2 text-xs text-gray-700">
+                            <li><strong class="text-red-600">ปัญหาหลัก:</strong> การกำจัดน้ำมันเก่าบนรถเข็นทำได้ยากและสกปรก</li>
+                            <li><strong class="text-red-600">ผลกระทบ:</strong> เสี่ยงโดนปรับ, ลูกค้าหายเพราะกลิ่น, ท่อตัน</li>
+                            <li><strong class="text-red-600">รากเหง้า:</strong> เพราะไม่มีถังดักไขมันที่ <u>'พกพาได้'</u> และติดตั้งกับรถเข็น</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                        <h4 class="font-bold text-green-800 text-sm mb-2 flex items-center gap-1">💎 Gain Analysis</h4>
+                        <ul class="space-y-2 text-xs text-gray-700">
+                            <li><strong class="text-green-600">ความต้องการ:</strong> อุปกรณ์แยกน้ำมันที่เบา ติดตั้งง่าย และราคาถูก</li>
+                            <li><strong class="text-green-600">ความสำคัญ:</strong> <span class="bg-red-500 text-white px-1 rounded text-[10px]">🔴 จำเป็นต้องมี</span></li>
+                            <li><strong class="text-green-600">ประโยชน์:</strong> เก็บร้านไวขึ้น, ขายน้ำมันเก่าได้เงิน, ไม่โดนปรับ</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-2xl">🧬</div>
+                <div>
+                    <h2 class="text-2xl font-bold">2. ถอดรหัสธรรมชาติ (MPB Framework)</h2>
+                    <p class="text-sm text-teal-600">การกำหนดปัจจัยและถอดรหัสธรรมชาติ</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border border-teal-200 shadow-sm mb-6">
+                <h3 class="text-lg font-bold text-teal-800 mb-4 border-l-4 border-teal-500 pl-3">2.1 การกำหนดปัจจัยศึกษา (Observation)</h3>
+                <p class="text-gray-700 mb-4 text-sm">การเรียนรู้จากธรรมชาติเริ่มจากการตั้งคำถามและสังเกตอย่างละเอียด โดยใช้เครื่องมือพื้นฐานที่สุดคือร่างกายของเรา:</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                    <div class="bg-gray-50 p-3 rounded-lg hover:bg-teal-50 transition">
+                        <div class="text-2xl mb-1">👁️</div>
+                        <div class="font-bold text-sm">ตา (ดู)</div>
+                        <div class="text-xs text-gray-500">สี, รูปทรง</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg hover:bg-teal-50 transition">
+                        <div class="text-2xl mb-1">👂</div>
+                        <div class="font-bold text-sm">หู (ฟัง)</div>
+                        <div class="text-xs text-gray-500">เสียงใบไม้ไหว</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg hover:bg-teal-50 transition">
+                        <div class="text-2xl mb-1">👃</div>
+                        <div class="font-bold text-sm">จมูก (ดม)</div>
+                        <div class="text-xs text-gray-500">กลิ่นเฉพาะตัว</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg hover:bg-teal-50 transition">
+                        <div class="text-2xl mb-1">👅</div>
+                        <div class="font-bold text-sm">ลิ้น (ชิม)</div>
+                        <div class="text-xs text-gray-500">รสฝาด/เปรี้ยว</div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg hover:bg-teal-50 transition">
+                        <div class="text-2xl mb-1">✋</div>
+                        <div class="font-bold text-sm">กาย (สัมผัส)</div>
+                        <div class="text-xs text-gray-500">ความสาก/หนาม</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm text-yellow-800 rounded-r flex gap-2 items-start">
+                    <span class="text-lg">💡</span>
+                    <div>
+                        <strong>Tip:</strong> นอกจากสังเกตแล้ว ต้องรู้จัก <em>"ทดสอบและเปรียบเทียบ"</em> การเปลี่ยนแปลงเมื่อเปลี่ยนปัจจัยแวดล้อม (เช่น แสง น้ำ อุณหภูมิ) เพื่อดูปฏิกิริยาของพืช
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="card p-4 border-t-4 border-green-500">
+                    <h3 class="font-bold text-lg text-green-800">M - Morphology</h3>
+                    <p class="text-sm text-gray-600 mt-1">รูปลักษณ์ภายนอก / โครงสร้าง</p>
+                    <p class="text-xs mt-2 bg-green-50 p-2 rounded">Ex: รากค้ำจุน, รูปทรงใบ, หนาม</p>
+                </div>
+                <div class="card p-4 border-t-4 border-blue-500">
+                    <h3 class="font-bold text-lg text-blue-800">P - Property</h3>
+                    <p class="text-sm text-gray-600 mt-1">คุณสมบัติ / เนื้อสาร / เคมี</p>
+                    <p class="text-xs mt-2 bg-blue-50 p-2 rounded">Ex: สารแทนนิน, ความเหนียว, กลิ่น</p>
+                </div>
+                <div class="card p-4 border-t-4 border-purple-500">
+                    <h3 class="font-bold text-lg text-purple-800">B - Behavior</h3>
+                    <p class="text-sm text-gray-600 mt-1">พฤติกรรม / กระบวนการทำงาน</p>
+                    <p class="text-xs mt-2 bg-purple-50 p-2 rounded">Ex: การกรองเกลือ, การหุบใบ</p>
+                </div>
+            </div>
+
+            <div class="bg-teal-50 p-6 rounded-xl border border-teal-200 shadow-sm">
+                <h3 class="text-lg font-bold text-teal-900 mb-4 border-l-4 border-teal-700 pl-3">2.3 กรณีศึกษา: เหงือกปลาหมอดอกม่วง</h3>
+                <p class="text-sm text-teal-700 mb-4 font-semibold">แผนภูมิต้นไม้: การวิเคราะห์ศักยภาพ (Tree Diagram Analysis)</p>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center gap-2 mb-6 text-sm">
+                    <div class="tree-node bg-white shadow">เหงือกปลาหมอ<br><span class="text-xs font-normal italic">Acanthus ebracteatus</span></div>
+                    <div class="tree-arrow md:rotate-[-90deg]">➜</div>
+                    <div class="tree-node bg-white shadow">ใบแก่ (1 ปี+)<br><span class="text-xs font-normal">แผ่นใบเรียบ, มีหนาม</span></div>
+                    <div class="tree-arrow md:rotate-[-90deg]">➜</div>
+                    <div class="tree-node bg-white shadow text-left">
+                        <ul class="list-disc pl-4 text-xs font-normal text-gray-600">
+                            <li><strong>รส:</strong> ฝาด (สารแทนนิน)</li>
+                            <li><strong>ทดสอบ:</strong> ติดสีเขียวบนผ้า, pH 8</li>
+                            <li><strong>พฤติกรรม:</strong> คายเกลือออกทางใบ</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border-l-4 border-green-500 shadow-sm">
+                    <h4 class="font-bold text-green-800 mb-2">🌟 ศักยภาพที่ค้นพบ (Solution)</h4>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        จากการศึกษาใบแก่ พบว่ามี <strong>"สารแทนนิน" (Tannin)</strong> ปริมาณมาก ซึ่งมีคุณสมบัติในการ 
+                        <u>ตกตะกอนสิ่งสกปรก</u> และจับตัวสารแขวนลอย/โลหะหนักในน้ำได้ <br>
+                        จึงนำไปสู่แนวคิดการสร้างผลิตภัณฑ์ <strong>"สารปรับปรุงคุณภาพน้ำทิ้ง"</strong> ที่เป็นมิตรต่อสิ่งแวดล้อม
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-2xl text-amber-600">📝</div>
+                <h2 class="text-2xl font-bold text-gray-800">3. แนวทางการทำใบกิจกรรม</h2>
+            </div>
+            <div class="card p-6 border border-amber-100 bg-amber-50">
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                        <div>
+                            <h4 class="font-bold text-amber-900">กำหนดปัจจัย (Observation)</h4>
+                            <p class="text-sm text-gray-700 mt-1">เลือกพืชที่สนใจ แล้วใช้ประสาทสัมผัสทั้ง 5 สังเกต และเขียนลงใน "แผนภูมิต้นไม้"</p>
+                            <div class="flex gap-2 mt-2 text-xs">
+                                <span class="bg-white px-2 py-1 rounded border">รูปลักษณ์ (M): สี, ผิว, หนาม</span>
+                                <span class="bg-white px-2 py-1 rounded border">คุณสมบัติ (P): กลิ่น, รส, ยาง</span>
+                                <span class="bg-white px-2 py-1 rounded border">พฤติกรรม (B): การหุบ, การคายน้ำ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <div>
+                            <h4 class="font-bold text-amber-900">จินตนาการคุณค่า (Alternatives)</h4>
+                            <p class="text-sm text-gray-700 mt-1">นำศักยภาพที่พบ มาวิเคราะห์ทางเลือก: <em>"ศักยภาพนี้เอาไปทำอะไรได้บ้าง?"</em></p>
+                            <p class="text-xs text-gray-500 mt-1 ml-2 italic">ตัวอย่าง: รสฝาด -> ยา, สีย้อม, บำบัดน้ำ</p>
+                            <div class="mt-2 p-2 bg-white rounded border border-amber-200 text-sm text-center font-bold text-amber-700">
+                                เลือก 1 ทางเลือกที่ดีที่สุด -> ระบุชื่อผลิตภัณฑ์
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        <div>
+                            <h4 class="font-bold text-amber-900">แก้ปัญหาชุมชน (Solution)</h4>
+                            <p class="text-sm text-gray-700 mt-1">เชื่อมโยงสู่การแก้ปัญหาจริง:</p>
+                            <ul class="list-disc pl-5 text-sm text-gray-600 mt-1 space-y-1">
+                                <li><strong>ปัญหา:</strong> น้ำเน่าเสีย กลิ่นเหม็น</li>
+                                <li><strong>ตัวช่วย:</strong> ใบเหงือกปลาหมอ (แทนนิน)</li>
+                                <li><strong>ผลลัพธ์:</strong> น้ำใสขึ้น ลดกลิ่น (ระบุเป้าหมายเชิงคุณภาพ)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-2xl">🔬</div>
+                <h2 class="text-2xl font-bold">4. การให้เหตุผล (CER Method)</h2>
+            </div>
+            <div class="card p-6 bg-white border border-gray-200">
+                <p class="mb-4 text-sm text-gray-600">การเชื่อมโยงความรู้ธรรมชาติสู่นวัตกรรมต้องมีหลักฐานยืนยัน</p>
+                <div class="space-y-3 text-sm">
+                    <div class="flex gap-3">
+                        <span class="font-bold text-teal-600 w-8 text-right">C</span>
+                        <div><strong>Claim (ข้อกล่าวอ้าง):</strong> คำตอบหรือข้อสรุปของคุณ <span class="text-gray-400">(เช่น พืชนี้กรองน้ำได้)</span></div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="font-bold text-teal-600 w-8 text-right">E</span>
+                        <div><strong>Evidence (หลักฐาน):</strong> ข้อมูลจาก MPB หรือผลการทดลอง <span class="text-gray-400">(เช่น ผล LAB พบว่าค่าความขุ่นลดลง)</span></div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="font-bold text-teal-600 w-8 text-right">R</span>
+                        <div><strong>Reasoning (เหตุผล):</strong> คำอธิบายทางวิทยาศาสตร์ที่เชื่อมโยง E ไปหา C <span class="text-gray-400">(เช่น เพราะโครงสร้างรากเพิ่มพื้นที่ผิวสัมผัส)</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="mt-10 pt-6 border-t flex justify-between">
+            <a href="index.html" class="text-gray-500 hover:text-teal-700 flex items-center gap-1">
+                <span>🏠</span> กลับหน้าหลัก
+            </a>
+            <a href="ใบงานที่ 1 Empathy & Analysis Worksheet.html" class="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 shadow-lg transition transform hover:scale-105 font-bold flex items-center gap-2">
+                เริ่มทำใบงานที่ 1 ➜
+            </a>
+        </div>
+
+    </div>
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClick() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.frequency.setValueAtTime(600, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.1);
+        }
+        document.querySelectorAll('a, button').forEach(el => el.addEventListener('click', playClick));
+    </script>
+</body>
+</html>

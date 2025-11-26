@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ห้องเรียน: Bio-Business Innovator</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        /* --- 1. Layout & Basics --- */
+        body { font-family: 'Sarabun', sans-serif; overflow: hidden; height: 100dvh; } 
+        .safe-pb { padding-bottom: env(safe-area-inset-bottom); }
+        .bg-main { background-color: #f3f4f6; transition: background-color 0.3s; }
+
+        /* --- 2. Menu Items --- */
+        .module-item { border-left: 4px solid transparent; transition: background-color 0.2s; cursor: pointer; position: relative; }
+        .module-item:hover { background-color: #f0f9ff; padding-left: 1.2rem; }
+        .module-item.active { background-color: #e0f2fe; border-left-color: #0284c7; color: #0369a1; font-weight: bold; }
+        
+        .type-guide { background-color: #fff7ed; color: #c2410c; font-weight: bold; border-bottom: 1px solid #fed7aa; }
+        .type-exam { background-color: #fdf2f8; color: #be185d; border-left: 4px solid #db2777; font-size: 0.9em; }
+        .type-lesson { background-color: #f0fdfa; color: #0f766e; font-weight: 600; border-top: 1px solid #ccfbf1; margin-top: 5px; }
+        .type-sheet { padding-left: 2rem; font-size: 0.95em; border-bottom: 1px dashed #e5e7eb; }
+        .type-game { background-color: #ecfdf5; color: #047857; font-weight: bold; border: 1px dashed #10b981; margin: 10px 0; border-radius: 8px; }
+        .type-report { background-color: #eff6ff; color: #1d4ed8; font-weight: bold; border: 1px solid #bfdbfe; border-radius: 8px; margin-top: 5px; }
+        .type-submit { background-color: #ecfdf5; color: #047857; font-weight: bold; border: 1px dashed #10b981; border-radius: 8px; margin-top: 5px; }
+
+        /* --- 3. Components --- */
+        .progress-fill { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* --- 4. Exam Mode --- */
+        body.exam-mode .bg-main { background-color: #e0f2fe; }
+        body.exam-mode #sidebar, body.exam-mode #bottomNav, body.exam-mode .menu-toggle-btn, body.exam-mode #normalHeaderContent { display: none !important; }
+        body.exam-mode #mainHeader { background-color: #2563eb !important; color: white !important; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3); }
+        body.exam-mode #examHeaderContent { display: flex; }
+
+        /* --- 5. Animations --- */
+        @keyframes point-left { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-10px); } }
+        .animate-point { animation: point-left 1.5s infinite ease-in-out; }
+        @keyframes confetti-fall { 0% { transform: translateY(-100vh) rotate(0deg); } 100% { transform: translateY(100vh) rotate(360deg); } }
+        .confetti { position: absolute; width: 10px; height: 10px; background-color: #f00; animation: confetti-fall linear infinite; z-index: 60; opacity: 0.8; }
+
+        /* --- 6. Mobile Sheet Overlay --- */
+        #mobile-sheet-overlay { transition: transform 0.3s ease-in-out; }
+        #mobile-sheet-overlay.hidden-sheet { transform: translateY(100%); }
+        #mobile-sheet-overlay.active-sheet { transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-main h-[100dvh] w-full flex flex-col overflow-hidden safe-pb">
+
+    <header id="mainHeader" class="bg-white shadow-md h-14 md:h-16 flex items-center justify-between px-4 md:px-6 z-20 shrink-0 transition-colors duration-300">
+        
+        <div id="normalHeaderContent" class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-3">
+                <button onclick="exitClassroom()" class="text-gray-400 hover:text-red-500 transition p-2 rounded-lg hover:bg-red-50" title="ออกจากระบบ"><i class="fas fa-sign-out-alt text-lg"></i></button>
+                <div class="border-l pl-4 border-gray-200">
+                    <h1 class="text-sm md:text-base font-bold text-gray-800 leading-tight truncate max-w-[150px] md:max-w-none">Bio-Business Innovator</h1>
+                    <div class="text-[10px] md:text-xs text-teal-600 font-medium flex gap-1"><i class="fas fa-user-circle"></i> <span id="displayUserName">Guest</span></div>
+                </div>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-3 w-1/3 bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
+                <div class="text-xs font-bold text-gray-500">Progress</div>
+                <div class="w-full bg-gray-200 rounded-full h-2"><div id="progressBar" class="bg-gradient-to-r from-teal-500 to-green-500 h-2 rounded-full progress-fill" style="width: 0%"></div></div>
+                <span id="progressText" class="text-xs font-bold text-teal-700">0%</span>
+            </div>
+
+            <button onclick="toggleSidebar()" class="md:hidden text-gray-600 p-2 menu-toggle-btn"><i class="fas fa-bars text-xl"></i></button>
+        </div>
+
+        <div id="examHeaderContent" class="hidden w-full items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2 rounded-lg"><i class="fas fa-edit text-xl"></i></div>
+                <div><h1 class="text-base font-bold leading-tight">กำลังทำข้อสอบ</h1><div class="text-xs opacity-80">Exam Mode Active</div></div>
+            </div>
+            <button onclick="exitExam()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-bold border border-white/40 transition"><i class="fas fa-times mr-1"></i> ออกจากการสอบ</button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <aside id="sidebar" class="w-80 bg-white border-r border-gray-200 flex flex-col z-30 absolute md:relative h-full transform -translate-x-full md:translate-x-0 transition-transform duration-300 shadow-2xl md:shadow-none">
+            <div class="p-4 bg-gradient-to-r from-teal-800 to-teal-700 text-white flex justify-between items-center shrink-0">
+                <div><div class="text-xs text-teal-200 uppercase font-bold tracking-wider">Curriculum</div><div class="font-bold text-lg">Course Content</div></div>
+                <button onclick="toggleSidebar()" class="md:hidden text-white hover:text-red-200"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="moduleList" class="flex-1 overflow-y-auto py-2 pb-4"></div>
+        </aside>
+
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
+
+        <main class="flex-1 flex flex-col relative w-full">
+            <div class="flex-1 p-2 md:p-4 overflow-hidden">
+                <div class="w-full h-full bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200 relative">
+                    
+                    <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm z-10 transition-opacity duration-300">
+                        <div id="introLoader" class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 max-w-xs w-full text-center transform transition-all">
+                            <div class="text-5xl mb-4 text-teal-600 animate-point hidden md:block">👈</div>
+                            <div class="text-5xl mb-4 text-teal-600 animate-bounce md:hidden">👆</div>
+                            <h3 class="font-bold text-lg text-gray-800 mb-2">เริ่มเรียนกันเลย!</h3>
+                            <div class="space-y-2 text-sm text-gray-600 text-left bg-teal-50 p-3 rounded-lg border border-teal-100 mb-4">
+                                <p>1. เลือกบทเรียนจากเมนู</p>
+                                <p>2. ทำใบงานแล้วกด "บันทึกภาพ"</p>
+                                <p>3. ส่งงานเมื่อทำเสร็จครบถ้วน</p>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-3 overflow-hidden">
+                                <div class="bg-teal-500 h-1.5 rounded-full animate-[width_2s_ease-in-out_infinite]" style="width: 50%"></div>
+                            </div>
+                            <button onclick="hideLoader()" class="text-xs text-gray-400 hover:text-teal-600 underline cursor-pointer">ข้ามคำแนะนำ</button>
+                        </div>
+                        <div id="simpleLoader" class="hidden flex-col items-center">
+                            <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-teal-600 mb-3"></div>
+                            <p class="text-teal-800 font-bold animate-pulse">กำลังโหลด...</p>
+                        </div>
+                    </div>
+
+                    <iframe id="contentFrame" class="w-full h-full border-none" src="" onload="hideLoader()"></iframe>
+                </div>
+            </div>
+
+            <div id="bottomNav" class="bg-white h-16 border-t px-4 md:px-6 flex items-center justify-between shrink-0 shadow-[0_-2px_10px_rgba(0,0,0,0.02)] safe-pb z-20">
+                <button onclick="prevModule()" id="btnPrev" class="flex items-center gap-2 text-gray-500 hover:text-teal-700 disabled:opacity-30 disabled:cursor-not-allowed px-4 py-2 rounded-lg hover:bg-gray-50 transition font-medium text-sm">
+                    <i class="fas fa-chevron-left"></i><span class="hidden md:inline">บทก่อนหน้า</span>
+                </button>
+                <div class="flex flex-col items-center">
+                    <div class="text-xs text-gray-400 uppercase font-bold tracking-wider">Current Lesson</div>
+                    <div class="text-sm font-bold text-gray-800 truncate max-w-[150px] md:max-w-md" id="currentModuleTitle">...</div>
+                </div>
+                <button onclick="nextModule()" id="btnNext" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition text-sm font-bold flex items-center gap-2 transform active:scale-95">
+                    <span class="hidden md:inline">ถัดไป</span><i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <div id="mobile-sheet-overlay" class="fixed inset-0 z-50 flex flex-col bg-white transform translate-y-full transition-transform duration-300 ease-in-out hidden">
+        <div class="h-14 bg-teal-800 flex items-center justify-between px-4 shrink-0 text-white">
+            <span class="font-bold truncate" id="mobile-sheet-title">ใบงาน</span>
+            <button onclick="closeMobileSheet()" class="bg-white/20 p-2 rounded-full text-sm hover:bg-white/30 transition"><i class="fas fa-times"></i> ปิด</button>
+        </div>
+        <div class="flex-1 relative overflow-hidden bg-gray-100">
+            <iframe id="mobile-sheet-frame" class="w-full h-full border-none"></iframe>
+        </div>
+    </div>
+
+    <div id="congratsModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center relative transform transition-all scale-95 opacity-0" id="modalContent">
+            <div id="confettiContainer" class="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl"></div>
+            <div class="text-7xl mb-4 animate-bounce" id="congratsIcon">🎉</div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">ยินดีด้วย!</h2>
+            <p class="text-gray-600 mb-6" id="congratsMessage">คุณจบหลักสูตรแล้ว</p>
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6">
+                <div class="text-xs text-gray-500 font-bold uppercase tracking-wide">คะแนน Post-Test</div>
+                <div class="text-4xl font-bold text-teal-600 mt-1" id="congratsScore">0 / 20</div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="loadModule(modules.findIndex(m=>m.type==='report')) || closeModal()" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-xl font-bold shadow transition">ดูรายงานผล</button>
+                <button onclick="closeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-xl font-bold transition">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Curriculum
+        const modules = [
+            { id: 0, title: "📖 คู่มือการเรียนรู้ (User Guide)", file: "guide.html", type: "guide" },
+            { id: 90, title: "📝 วัดผลสัมฤทธิ์ก่อนเรียน (20 ข้อ)", file: "assessment.html?id=course_pre", type: "exam" },
+            { id: 101, title: "📚 บทเรียนที่ 1: ถอดรหัสธรรมชาติ", file: "lesson_phase1.html", type: "lesson" },
+            { id: 91, title: "✍️ สอบย่อยก่อนเรียน (บทที่ 1)", file: "assessment.html?id=module1_pre", type: "exam" },
+            { id: 1, title: "1. Empathy & Analysis", file: "ใบงานที่ 1 Empathy & Analysis Worksheet.html", type: "sheet" },
+            { id: 2, title: "2. MPB Framework", file: "ใบงานที่ 2 การวิเคราะห์ MPB Framework.html", type: "sheet" },
+            { id: 3, title: "3. CER Method", file: "ใบงานที่ 3 CER การพิสูจน์สมมติฐานจากธรรมชาติ (MPB Linkage).html", type: "sheet" },
+            { id: 92, title: "✅ สอบย่อยหลังเรียน (บทที่ 1)", file: "assessment.html?id=module1_post", type: "exam" },
+            { id: 102, title: "📚 บทเรียนที่ 2: การปั้นไอเดีย", file: "lesson_phase2.html", type: "lesson" },
+            { id: 93, title: "✍️ สอบย่อยก่อนเรียน (บทที่ 2)", file: "assessment.html?id=module2_pre", type: "exam" },
+            { id: 4, title: "4. MPD Canvas", file: "ใบงานที่ 4 ตาราง MPD Canvas.html", type: "sheet" },
+            { id: 5, title: "5. RMI Matrix", file: "ใบงานที่ 5 RMI Matrix.html", type: "sheet" },
+            { id: 6, title: "6. KPI Artifact", file: "ใบงานที่ 6 TQCKPI Artifact.html", type: "sheet" },
+            { id: 94, title: "✅ สอบย่อยหลังเรียน (บทที่ 2)", file: "assessment.html?id=module2_post", type: "exam" },
+            { id: 103, title: "📚 บทเรียนที่ 3: กลยุทธ์ธุรกิจ", file: "lesson_phase3.html", type: "lesson" },
+            { id: 95, title: "✍️ สอบย่อยก่อนเรียน (บทที่ 3)", file: "assessment.html?id=module3_pre", type: "exam" },
+            { id: 7, title: "7. SIPOC Template", file: "ใบงานที่ 7 SIPOC Template.html", type: "sheet" },
+            { id: 8, title: "8. TOWS Matrix", file: "ใบงานที่ 8 TOWS Matrix.html", type: "sheet" },
+            { id: 9, title: "9. Poster Design", file: "ใบงานที่ 9 Poster Design Blueprint.html", type: "sheet" },
+            { id: 10, title: "10. Business Model", file: "ใบงานที่ 10 Business Model Canvas.html", type: "sheet" },
+            { id: 96, title: "✅ สอบย่อยหลังเรียน (บทที่ 3)", file: "assessment.html?id=module3_post", type: "exam" },
+            { id: 99, title: "📝 วัดผลสัมฤทธิ์หลังเรียน (20 ข้อ)", file: "assessment.html?id=course_post", type: "exam" },
+            { id: 11, title: "🎮 ภารกิจพิเศษ: Mangrove Quest", file: "Mangrove Innovator Quest (เกมนักนวัตกร).html", type: "game" },
+            { id: 100, title: "📊 รายงานผลการเรียนรู้ (Report)", file: "assessment.html?id=report", type: "report" },
+            { id: 999, title: "📤 ส่งผลงาน / ตรวจสอบ", file: "submission.html", type: "submit" }
+        ];
+
+        // Variables
+        let currentIndex = 0;
+        let currentUser = "";
+        let isFirstLoad = true; 
+        const iframe = document.getElementById('contentFrame');
+        const titleDisplay = document.getElementById('currentModuleTitle');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const moduleList = document.getElementById('moduleList');
+        const loader = document.getElementById('iframeLoader');
+        const mobileSheetOverlay = document.getElementById('mobile-sheet-overlay');
+        const mobileSheetFrame = document.getElementById('mobile-sheet-frame');
+        const mobileSheetTitle = document.getElementById('mobile-sheet-title');
+
+        // Initialization
+        window.onload = function() {
+            const savedName = localStorage.getItem('innovatorName');
+            if (savedName) {
+                currentUser = savedName;
+                document.getElementById('displayUserName').innerText = savedName;
+                const savedIndex = localStorage.getItem('courseProgressIndex');
+                if(savedIndex) currentIndex = parseInt(savedIndex);
+                if(iframe.src === "" || iframe.src.includes("about:blank")) loadModule(currentIndex);
+            } else {
+                window.location.href = 'welcome.html'; // Redirect to welcome
+            }
+            renderMenu();
+        };
+
+        function exitClassroom() {
+            if(confirm("ออกจากห้องเรียน?")) {
+                window.location.href = 'welcome.html';
+            }
+        }
+
+        function renderMenu() {
+            moduleList.innerHTML = '';
+            modules.forEach((mod, index) => {
+                const btn = document.createElement('div');
+                let classes = "module-item w-full text-left px-4 py-3 text-sm text-gray-600 flex items-center gap-2 border-b border-gray-50";
+                if(mod.type==="guide") classes+=" type-guide";
+                else if(mod.type==="lesson") classes+=" type-lesson";
+                else if(mod.type==="sheet") classes+=" type-sheet";
+                else if(mod.type==="exam") classes+=" type-exam";
+                else if(mod.type==="game") classes+=" type-game";
+                else if(mod.type==="report") classes+=" type-report";
+                else if(mod.type==="submit") classes+=" type-submit";
+                
+                if(index === currentIndex) classes += " active";
+                btn.className = classes;
+                btn.innerHTML = `<span class="truncate">${mod.title}</span>`;
+                btn.onclick = () => { playClick(); loadModule(index); if(window.innerWidth < 768) toggleSidebar(); };
+                moduleList.appendChild(btn);
+            });
+        }
+
+        function loadModule(index) {
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            
+            // Loader Mode Check
+            if(isFirstLoad) {
+                document.getElementById('introLoader').classList.remove('hidden');
+                document.getElementById('simpleLoader').classList.add('hidden');
+            } else {
+                document.getElementById('introLoader').classList.add('hidden');
+                document.getElementById('simpleLoader').classList.remove('hidden');
+            }
+
+            currentIndex = index;
+            localStorage.setItem('courseProgressIndex', currentIndex);
+            const mod = modules[index];
+
+            // --- ตรวจสอบและเปิดในหน้าต่างใหม่สำหรับ 'sheet' และ 'game' ---
+            if (mod.type === 'sheet' || mod.type === 'game') {
+                window.open(mod.file, '_blank'); // เปิดในหน้าต่างใหม่/แท็บใหม่
+                
+                // อัปเดตสถานะ UI หลัก
+                closeMobileSheet();
+                document.body.classList.remove('exam-mode');
+                titleDisplay.innerText = mod.title;
+                renderMenu(); 
+                updateProgress(); 
+                updateButtons();
+                
+                // ซ่อน Loader
+                hideLoader(); 
+                
+                return; // หยุดการทำงานของฟังก์ชัน เพราะเปิดในหน้าต่างใหม่แล้ว
+            }
+            // ------------------------------------------------------------------
+
+            // Normal Loading (สำหรับประเภทอื่น ๆ เช่น lesson, exam, guide, report, submit)
+            closeMobileSheet();
+            if(mod.type === 'exam') document.body.classList.add('exam-mode');
+            else document.body.classList.remove('exam-mode');
+
+            iframe.src = mod.file;
+            titleDisplay.innerText = mod.title;
+            renderMenu(); updateProgress(); updateButtons();
+        }
+
+        function hideLoader() {
+            setTimeout(() => { 
+                loader.style.opacity = '0'; 
+                setTimeout(() => { 
+                    loader.style.display = 'none'; 
+                    if(isFirstLoad) isFirstLoad = false; 
+                }, 200); 
+            }, 800);
+        }
+
+        function closeMobileSheet() {
+            mobileSheetOverlay.classList.add('translate-y-full');
+            setTimeout(() => { mobileSheetOverlay.classList.add('hidden'); mobileSheetFrame.src = ''; }, 300);
+        }
+
+        function loadSubmission() {
+            playClick();
+            const submitIndex = modules.findIndex(m => m.type === 'submit');
+            if(submitIndex !== -1) loadModule(submitIndex);
+        }
+
+        function exitExam() { if(confirm("ออกจากสอบ?")) loadModule(0); }
+        function nextModule() { playClick(); if (currentIndex < modules.length - 1) loadModule(currentIndex + 1); else finishCourse(); }
+        function prevModule() { playClick(); if (currentIndex > 0) loadModule(currentIndex - 1); }
+
+        function updateButtons() {
+            document.getElementById('btnPrev').disabled = currentIndex === 0;
+            const btnNext = document.getElementById('btnNext');
+            if (currentIndex === modules.length - 1) {
+                btnNext.innerHTML = '🎉 จบคอร์ส';
+                btnNext.className = "bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-lg shadow-md transition text-sm font-bold flex items-center gap-2";
+            } else {
+                btnNext.innerHTML = 'ถัดไป <i class="fas fa-chevron-right"></i>';
+                btnNext.className = "bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg shadow-md transition text-sm font-bold flex items-center gap-2";
+            }
+        }
+
+        function updateProgress() {
+            const totalModules = modules.length - 1; 
+            let percent = Math.round(((currentIndex)/totalModules)*100);
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressText').innerText = `${percent}%`;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if(sidebar.classList.contains('-translate-x-full')) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); }
+            else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
+        }
+
+        function finishCourse() {
+            const scoreString = localStorage.getItem('score_course_post');
+            if(scoreString === null) {
+                alert("⚠️ กรุณาทำแบบทดสอบหลังเรียน (Post-Course) ให้ครบก่อนจบหลักสูตรครับ");
+                loadModule(modules.findIndex(m => m.id === 99)); 
+                return;
+            }
+
+            const score = parseInt(scoreString); // คะแนนที่ได้จริง
+            const totalQuestions = 20; // คะแนนเต็ม
+            const passingPercentage = 70; // เกณฑ์ผ่าน 70%
+            const passingScore = Math.ceil((passingPercentage / 100) * totalQuestions); // 14 คะแนน
+            const actualPercentage = (score / totalQuestions) * 100;
+
+            // Get elements
+            const modal = document.getElementById('congratsModal');
+            const congratsScore = document.getElementById('congratsScore');
+            const congratsIcon = document.getElementById('congratsIcon');
+            const congratsMessage = document.getElementById('congratsMessage');
+            const modalContent = document.getElementById('modalContent');
+            
+            // Update score display
+            congratsScore.innerText = `${score} / ${totalQuestions}`;
+
+            if (score >= passingScore) {
+                // --- กรณีผ่านเกณฑ์ (PASS: Score >= 14) ---
+                congratsMessage.innerHTML = `คุณจบหลักสูตรและ**ผ่านการสอบ**เรียบร้อยแล้ว! (คะแนน ${actualPercentage.toFixed(0)}% ซึ่งสูงกว่าเกณฑ์ ${passingPercentage}%)`;
+                congratsIcon.innerText = "🏆"; // ไอคอนสำหรับผ่าน
+                congratsIcon.classList.remove('text-red-600');
+                congratsIcon.classList.add('text-teal-600');
+                startConfetti();
+            } else {
+                // --- กรณีไม่ผ่านเกณฑ์ (FAIL: Score < 14) ---
+                congratsMessage.innerHTML = `ขอแสดงความเสียใจ, คุณจบหลักสูตรแล้วแต่**ยังไม่ผ่านเกณฑ์การสอบ** (คะแนน ${actualPercentage.toFixed(0)}% ซึ่งต่ำกว่าเกณฑ์ ${passingPercentage}%)`;
+                congratsIcon.innerText = "😢"; // ไอคอนสำหรับไม่ผ่าน
+                congratsIcon.classList.remove('text-teal-600');
+                congratsIcon.classList.add('text-red-600');
+                document.getElementById('confettiContainer').innerHTML = ''; // ปิด Confetti หากไม่ผ่าน
+            }
+
+            // Show modal
+            modal.classList.remove('hidden');
+            setTimeout(() => { modalContent.classList.remove('scale-95', 'opacity-0'); modalContent.classList.add('scale-100', 'opacity-100'); }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('congratsModal');
+            document.getElementById('modalContent').classList.remove('scale-100', 'opacity-100');
+            document.getElementById('modalContent').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { modal.classList.add('hidden'); document.getElementById('confettiContainer').innerHTML = ''; }, 300);
+        }
+
+        function startConfetti() {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+            for(let i=0; i<50; i++) {
+                const div = document.createElement('div');
+                div.className = 'confetti';
+                div.style.left = Math.random()*100 + '%';
+                div.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+                div.style.animationDuration = (Math.random()*2 + 1) + 's';
+                div.style.animationDelay = Math.random() + 's';
+                container.appendChild(div);
+            }
+        }
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playClick() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.type='sine'; o.frequency.setValueAtTime(800, audioCtx.currentTime);
+            o.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime+0.1);
+            g.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.1);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.1);
+        }
+    </script>
+</body>
+</html>

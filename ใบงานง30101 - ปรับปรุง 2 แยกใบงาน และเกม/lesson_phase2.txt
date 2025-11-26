@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียนที่ 2: การปั้นไอเดีย</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background-color: #eff6ff; color: #1e3a8a; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .metric-box { border: 1px dashed #93c5fd; padding: 10px; border-radius: 8px; text-align: center; background-color: #f8fafc; }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto p-6 md:p-10">
+        
+        <header class="mb-8 border-b-4 border-blue-500 pb-4">
+            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">Phase 2: Ideation</span>
+            <h1 class="text-3xl font-bold text-blue-900 mt-2">บทเรียนที่ 2: การปั้นไอเดียและวางแผน</h1>
+            <p class="text-blue-700">การคัดเลือกฟีเจอร์ (MPD) และการพัฒนาปรับปรุง (RMI)</p>
+        </header>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-2xl">📝</div>
+                <h2 class="text-2xl font-bold">1. การคัดเลือกฟีเจอร์ (MPD Canvas)</h2>
+            </div>
+            <div class="card p-6 grid md:grid-cols-3 gap-4 mb-6">
+                <div class="text-center p-4 bg-red-50 rounded-lg border border-red-100">
+                    <div class="text-3xl mb-2">🔴</div>
+                    <strong class="text-red-800">M - Must have</strong>
+                    <p class="text-xs mt-2 text-gray-600">สิ่งที่ขาดไม่ได้ (Core)</p>
+                </div>
+                <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-100">
+                    <div class="text-3xl mb-2">🟡</div>
+                    <strong class="text-yellow-800">P - Performance</strong>
+                    <p class="text-xs mt-2 text-gray-600">ประสิทธิภาพ (Speed/Durability)</p>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg border border-green-100">
+                    <div class="text-3xl mb-2">🟢</div>
+                    <strong class="text-green-800">D - Delighter</strong>
+                    <p class="text-xs mt-2 text-gray-600">ความประทับใจ (Wow Factor)</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-2xl">🔄</div>
+                <h2 class="text-2xl font-bold">2. กระบวนการพัฒนา (RMI Framework)</h2>
+            </div>
+            <div class="card p-6 border border-blue-100 mb-6">
+                <p class="mb-4 text-sm text-gray-600">เทคนิคการปรับปรุงและพัฒนานวัตกรรมให้ดียิ่งขึ้น:</p>
+                <ul class="grid md:grid-cols-3 gap-4 text-sm">
+                    <li class="bg-orange-50 p-4 rounded border border-orange-200">
+                        <div class="text-2xl mb-2">✂️</div>
+                        <strong class="text-orange-800 block mb-1">R - Reduce (ลด)</strong>
+                        ลดความซับซ้อน ลดต้นทุน หรือตัดสิ่งที่ไม่จำเป็นออกเพื่อให้งานง่ายขึ้น
+                    </li>
+                    <li class="bg-blue-50 p-4 rounded border border-blue-200">
+                        <div class="text-2xl mb-2">🔧</div>
+                        <strong class="text-blue-800 block mb-1">M - Modify (ปรับ)</strong>
+                        ปรับเปลี่ยนวัสดุ ขนาด หรือวิธีการให้เหมาะสมกับการใช้งานจริง
+                    </li>
+                    <li class="bg-green-50 p-4 rounded border border-green-200">
+                        <div class="text-2xl mb-2">🚀</div>
+                        <strong class="text-green-800 block mb-1">I - Increase (เพิ่ม)</strong>
+                        เพิ่มฟีเจอร์ ประสิทธิภาพ หรือฟังก์ชันใหม่เพื่อสร้างจุดเด่น
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm">
+                <h3 class="font-bold text-blue-900 mb-3 flex items-center gap-2">
+                    💡 กรณีศึกษา: การพัฒนาแผ่นกรองน้ำ (RMI Analysis)
+                </h3>
+                <div class="space-y-3 text-sm text-gray-700">
+                    <div class="flex gap-3 items-start">
+                        <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-bold h-fit min-w-[80px] text-center">Reduce</span>
+                        <div>
+                            <strong>สิ่งที่ลด:</strong> ลดน้ำหนักของแผ่นกรอง และลดขั้นตอนการเตรียมใบ<br>
+                            <span class="text-xs text-gray-500">เหตุผล: เพื่อให้พกพาง่ายและผลิตได้ไวขึ้น</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-bold h-fit min-w-[80px] text-center">Modify</span>
+                        <div>
+                            <strong>สิ่งที่ปรับ:</strong> ปรับรูปทรงจากแผ่นสี่เหลี่ยม เป็นวงกลม<br>
+                            <span class="text-xs text-gray-500">วิธีปรับ: ใช้แม่พิมพ์วงกลม เพื่อให้ใส่ลงในถังน้ำทั่วไปได้พอดี</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-bold h-fit min-w-[80px] text-center">Increase</span>
+                        <div>
+                            <strong>สิ่งที่เพิ่ม:</strong> เพิ่มหูหิ้วหรือด้ามจับ<br>
+                            <span class="text-xs text-gray-500">ประโยชน์: เพื่อให้ดึงแผ่นกรองขึ้นจากน้ำได้สะดวกมือไม่เปียก</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-2xl">📈</div>
+                <h2 class="text-2xl font-bold">3. การวัดผล (Process P+TQC)</h2>
+            </div>
+            <div class="card p-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="metric-box"><strong class="text-blue-900">Time</strong><br>เวลา</div>
+                    <div class="metric-box"><strong class="text-blue-900">Quality</strong><br>คุณภาพ</div>
+                    <div class="metric-box"><strong class="text-blue-900">Cost</strong><br>ต้นทุน</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="mt-10 pt-6 border-t flex justify-between">
+            <a href="index.html" class="text-gray-500 hover:text-blue-700">🏠 กลับหน้าหลัก</a>
+            <a href="ใบงานที่ 4 ตาราง MPD Canvas.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow-lg transition font-bold">
+                เริ่มทำใบงานที่ 4 ➜
+            </a>
+        </div>
+    </div>
+</body>
+</html>

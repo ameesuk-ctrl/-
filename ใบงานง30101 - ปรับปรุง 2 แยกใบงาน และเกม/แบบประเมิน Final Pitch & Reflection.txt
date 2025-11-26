@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Pitch & Reflection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 1. นำเข้า Library สำหรับแปลงหน้าเว็บเป็นรูปภาพ -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1A237E; /* Midnight Blue - Final/Professional */
+            --secondary-color: #FFD700; /* Gold - Achievement */
+            --accent-color: #E8EAF6;
+            --text-color: #212121;
+            --border-color: #C5CAE9;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eceff1;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center; /* จัดกึ่งกลาง */
+        }
+
+        .page-container {
+            width: 210mm; /* A4 Size */
+            min-height: 297mm;
+            background: white;
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 4px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 26px;
+            color: var(--primary-color);
+            text-transform: uppercase;
+        }
+
+        .header-title span {
+            font-size: 14px;
+            color: #5C6BC0;
+            letter-spacing: 1px;
+        }
+
+        .badge-icon {
+            font-size: 40px;
+        }
+
+        /* Section Styles */
+        h2 {
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-top: 0;
+            display: inline-block;
+        }
+
+        .instruction {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        /* Part 1: Peer Review Table - ปรับเป็น 1 Column */
+        .peer-review-container {
+            display: block; /* เปลี่ยนจาก grid เป็น block เพื่อแสดง 1 การ์ดเต็มความกว้าง */
+            margin-bottom: 30px;
+        }
+
+        .review-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px; /* เพิ่ม Padding ให้ดูโปร่งขึ้น */
+            background-color: #FAFAFA;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+        }
+
+        .criteria-list {
+            font-size: 13px; /* ขยายตัวอักษรเล็กน้อยให้อ่านง่ายขึ้น */
+            margin-bottom: 15px;
+        }
+
+        .criteria-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+            margin-bottom: 8px; /* เพิ่มระยะห่างระหว่างข้อ */
+            padding-bottom: 4px;
+            border-bottom: 1px solid #eee; /* เส้นคั่นบางๆ เพื่อให้อ่านง่าย */
+        }
+
+        .criteria-item:last-child {
+            border-bottom: none;
+        }
+
+        .score-input {
+            width: 50px; /* ขยายช่องกรอกคะแนน */
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+            padding: 4px;
+        }
+
+        textarea.comment-box {
+            width: 100%;
+            height: 60px; /* เพิ่มความสูงกล่องคอมเมนต์ */
+            border: 1px solid #ddd;
+            resize: none;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 12px;
+            padding: 8px;
+            box-sizing: border-box;
+            background-color: white;
+        }
+
+        /* Part 2: Final Reflection */
+        .reflection-section {
+            border-top: 2px solid var(--accent-color);
+            padding-top: 20px;
+        }
+
+        .reflection-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .question-box {
+            background-color: var(--accent-color);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        textarea.reflection-input {
+            width: 100%;
+            height: 80px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            box-sizing: border-box;
+            background: white;
+        }
+
+        /* Footer - Score Summary */
+        .footer-score {
+            margin-top: 30px;
+            border: 2px solid var(--secondary-color);
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            background-color: #FFFDE7;
+        }
+
+        /* Action Buttons (Floating) */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Sarabun', sans-serif;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+        .btn-print { background-color: var(--primary-color); }
+        .btn-image { background-color: #FFD700; color: #333; /* Gold with dark text */ }
+
+        @media print {
+            body { background: white; padding: 0; display: block; }
+            .page-container { box-shadow: none; margin: 0; padding: 20px; width: 100%; }
+            .action-buttons { display: none; } /* ซ่อนปุ่ม */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- กลุ่มปุ่มกด -->
+    <div class="action-buttons">
+        <button class="btn btn-print" onclick="window.print()">
+            🖨️ พิมพ์ / Save PDF
+        </button>
+        <button class="btn btn-image" onclick="saveAsImage()">
+            📸 บันทึกเป็นภาพ
+        </button>
+    </div>
+
+    <!-- ใส่ ID capture-target -->
+    <div class="page-container" id="capture-target">
+        <header>
+            <div class="header-title">
+                <h1>Final Pitch & Reflection</h1>
+                <span>บทสรุปนวัตกรและการประเมินผลงาน (Final Artifact)</span>
+            </div>
+            <div class="badge-icon">🎓</div>
+        </header>
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
+            <div><strong>ชื่อ-สกุล:</strong> ............................................................</div>
+            <div><strong>กลุ่มที่:</strong> ............ <strong>เลขที่:</strong> ............</div>
+        </div>
+
+        <section>
+            <h2>ส่วนที่ 1: Peer Evaluation (ประเมินเพื่อน)</h2>
+            <!-- ปรับคำชี้แจงให้ประเมินเพียง 1 กลุ่ม -->
+            <p class="instruction">ให้คะแนนกลุ่มเพื่อนที่นำเสนอ (เลือกประเมิน 1 กลุ่มที่สนใจ) ตามเกณฑ์: 5=ดีเยี่ยม, 1=ปรับปรุง</p>
+
+            <div class="peer-review-container">
+                
+                <div class="review-card">
+                    <div class="card-header">
+                        <input type="text" placeholder="ระบุชื่อกลุ่มเพื่อนที่ประเมิน..." style="border:none; background:transparent; font-weight:bold; width:70%; font-family:'Sarabun'; font-size: 16px; border-bottom: 1px dashed #aaa;">
+                        <span style="font-size: 16px; font-weight: bold;">กลุ่มที่: ___</span>
+                    </div>
+                    <div class="criteria-list">
+                        <div class="criteria-item">
+                            <span>1. <strong>Innovation (MPD):</strong> นวัตกรรมน่าสนใจ ตอบโจทย์ Delighters</span>
+                            <input type="number" class="score-input" max="5" min="1">
+                        </div>
+                        <div class="criteria-item">
+                            <span>2. <strong>Reliability (CER):</strong> มีหลักฐาน/เหตุผลทางวิทย์รองรับ (Tannin/...)</span>
+                            <input type="number" class="score-input" max="5" min="1">
+                        </div>
+                        <div class="criteria-item">
+                            <span>3. <strong>Strategy (TOWS):</strong> กลยุทธ์ชัดเจน เป็นไปได้จริง</span>
+                            <input type="number" class="score-input" max="5" min="1">
+                        </div>
+                        <div class="criteria-item">
+                            <span>4. <strong>Presentation:</strong> การนำเสนอน่าสนใจ เข้าใจง่าย</span>
+                            <input type="number" class="score-input" max="5" min="1">
+                        </div>
+                    </div>
+                    <textarea class="comment-box" placeholder="จุดเด่นที่ชอบที่สุด / ข้อเสนอแนะเพิ่มเติม: ..."></textarea>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="reflection-section">
+            <h2>ส่วนที่ 2: Final Reflection (สะท้อนคิดปิดโครงการ)</h2>
+            <p class="instruction">ตอบคำถามต่อไปนี้ตามความเป็นจริง เพื่อประเมินการเรียนรู้ของตนเอง (Metacognition)</p>
+
+            <div class="reflection-grid">
+                
+                <div class="question-box">
+                    <div class="question-text">1. เครื่องมือใด (MPD, CER, SIPOC, TOWS) ที่ช่วยให้งานกลุ่มของคุณสำเร็จมากที่สุด? เพราะเหตุใด?</div>
+                    <textarea class="reflection-input" placeholder="ตอบ: ฉันคิดว่า... เพราะช่วยให้เรา..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-text">2. ระหว่างทำโครงการ พบปัญหาอะไรที่ท้าทายที่สุด (เช่น ความคิดไม่ตรงกัน, ข้อมูลไม่พอ) และแก้ปัญหานั้นอย่างไร?</div>
+                    <textarea class="reflection-input" placeholder="ตอบ: ปัญหาคือ... กลุ่มเราแก้โดย..."></textarea>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-text">3. ความรู้เรื่อง "การวิเคราะห์นวัตกรรมเชิงกลยุทธ์" นี้ จะเป็นประโยชน์ต่ออาชีพในฝันของคุณในอนาคตได้อย่างไร?</div>
+                    <textarea class="reflection-input" placeholder="ตอบ: อาชีพที่ฉันอยากเป็นคือ... ความรู้นี้จะช่วย..."></textarea>
+                </div>
+
+            </div>
+        </section>
+
+        <div class="footer-score">
+            <h3 style="margin:0 0 10px 0; font-size:16px;">บันทึกผลการประเมิน (สำหรับครู)</h3>
+            <div style="display:flex; justify-content:space-around; font-weight:bold;">
+                <div>คะแนน Post-test (K): ____ / 20</div>
+                <div>คะแนน Artifact (P): ____ / 50</div>
+                <div>คะแนน Reflection (A): ____ / 30</div>
+            </div>
+            <div style="margin-top:10px; font-size:12px; color:#555;">ลงชื่อครูผู้สอน: .......................................................</div>
+        </div>
+
+    </div>
+
+    <!-- Script บันทึกภาพ -->
+    <script>
+        function saveAsImage() {
+            const element = document.getElementById('capture-target');
+            
+            html2canvas(element, {
+                scale: 2, // เพิ่มความละเอียด
+                backgroundColor: "#ffffff",
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Final-Pitch-Reflection.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Error:", err);
+                alert("ไม่สามารถบันทึกภาพได้ กรุณาลองใหม่");
+            });
+        }
+    </script>
+
+</body>
+</html>

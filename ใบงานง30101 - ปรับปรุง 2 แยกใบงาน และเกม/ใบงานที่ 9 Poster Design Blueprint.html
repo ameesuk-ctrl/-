@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>ใบงานที่ 9: Poster Design Blueprint (Custom Header BG)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #004D40;
+            --secondary-color: #009688;
+            --bg-color: #E0F2F1;
+            --border-color: #80CBC4;
+            --text-color: #263238;
+            --example-bg: #FFF3E0;
+            --example-border: #FFB74D;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #555;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            display: block; 
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .page-container {
+            width: 210mm; 
+            min-width: 210mm;
+            min-height: 297mm;
+            height: auto;
+            background: white;
+            padding: 15mm;
+            margin: 0 auto;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* --- Header & Typography --- */
+        header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 { margin: 0; font-size: 20px; color: var(--primary-color); line-height: 1.2; }
+        .sub-header { font-size: 12px; color: #555; }
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--secondary-color);
+            padding-bottom: 3px;
+        }
+
+        /* --- Inputs --- */
+        label {
+            font-size: 11px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+            color: #00796B;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 11px;
+            resize: none;
+            overflow: hidden;
+            background-color: #fafafa;
+            transition: border 0.3s, background 0.3s;
+            line-height: 1.4;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            background-color: #fff;
+            box-shadow: 0 0 3px rgba(0, 150, 136, 0.3);
+        }
+
+        /* --- Layout Grid --- */
+        .poster-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            border: 2px dashed #ccc;
+            padding: 10px;
+            background-color: #fdfdfd;
+            flex-grow: 1;
+        }
+
+        .poster-section {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* --- Header Section (Custom BG Support) --- */
+        .header-section {
+            grid-column: 1 / span 3; 
+            background-color: var(--primary-color); /* สีเริ่มต้น */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: relative; /* เพื่อวางปุ่มเปลี่ยนรูป */
+            transition: background-image 0.3s;
+        }
+        
+        /* เพิ่มเงาให้ Text ใน Header เพื่อให้อ่านออกเวลาเปลี่ยน Background */
+        .header-section label { 
+            color: #E0F2F1; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8); 
+        }
+        
+        .header-section input {
+            background: rgba(0, 0, 0, 0.3); /* พื้นหลัง input ดำจางๆ */
+            color: white;
+            border: 1px solid rgba(255,255,255,0.5);
+            text-align: center;
+            backdrop-filter: blur(2px); /* เบลอพื้นหลังนิดหน่อยให้อ่านง่าย */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .header-section input::placeholder { color: #ccc; }
+        .header-section input:focus { background: rgba(0, 0, 0, 0.6); color: white; }
+
+        /* ปุ่มเปลี่ยน BG Header */
+        .bg-edit-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+            padding: 2px 8px;
+            color: #333;
+            z-index: 10;
+            font-weight: bold;
+        }
+        .bg-edit-btn:hover { background: white; }
+
+        .col-span-2 { grid-column: span 2; }
+
+        /* --- Image Upload Area (Product) --- */
+        .image-upload-area {
+            width: 100%;
+            min-height: 120px;
+            border: 2px dashed #009688;
+            background-color: #F0F4C3;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .image-upload-area:hover { background-color: #E6EE9C; }
+        .upload-placeholder {
+            text-align: center;
+            color: #558B2F;
+            font-size: 12px;
+            pointer-events: none;
+        }
+        #preview-img {
+            width: 100%;
+            height: auto;
+            display: none;
+            object-fit: contain;
+        }
+
+        /* --- UI Controls --- */
+        .btn-group {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+            font-family: 'Sarabun', sans-serif;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn-print { background: #E65100; }
+        .btn-save { background: #00695C; }
+        .btn-example { background: #FF9800; margin: 0 auto 10px auto; font-size: 12px; padding: 5px 15px; width: fit-content; display: block; cursor: pointer; border: none; border-radius: 20px; color: white;}
+
+        #example-content {
+            display: none;
+            background-color: var(--example-bg);
+            border: 1px dashed var(--example-border);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 11px;
+        }
+
+        @page { size: A4; margin: 0; }
+        @media print {
+            html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; background: white; overflow: hidden; }
+            .page-container { width: 210mm !important; height: 297mm !important; padding: 10mm; border: none; box-shadow: none; margin: 0;}
+            .btn-group, .btn-example, #example-content, .bg-edit-btn { display: none !important; }
+            * { -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="btn-group">
+        <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์ / PDF</button>
+        <button class="btn btn-save" onclick="saveAsImage()">📸 บันทึกเป็นภาพ</button>
+    </div>
+
+    <div class="page-container" id="capture-target">
+        
+        <header>
+            <div>
+                <h1>ใบงานที่ 9: Poster Design Blueprint</h1>
+                <div class="sub-header">การสังเคราะห์ข้อมูลเพื่อจัดทำสื่อนำเสนอ (Final Artifact Synthesis)</div>
+            </div>
+            <div style="text-align: right; font-size: 12px;">
+                กลุ่มที่: <input type="text" style="width: 50px; display: inline; text-align: center; border-bottom: 1px solid #ccc; border-top: none; border-left: none; border-right: none;">
+            </div>
+        </header>
+
+        <button class="btn btn-example" onclick="toggleExample()">💡 ดู/ซ่อน ตัวอย่างการเขียน</button>
+        
+        <div id="example-content">
+            <strong>ตัวอย่าง:</strong> 
+            <span style="color:#C62828;">[Pain: ชาวบ้านแพ้น้ำเสีย คัน ผื่นขึ้น]</span> -> 
+            Claim: "แผ่นกรองใบเหงือกปลาหมอบำบัดน้ำเสียได้จริง" | 
+            Evidence: "ลดค่า BOD 50% ใน 1 ชม." | 
+            Delighters: "ทำจากพืช 100% ย่อยสลายได้"
+        </div>
+
+        <div class="poster-layout">
+
+            <div class="poster-section header-section" id="header-section-box">
+                
+                <button class="bg-edit-btn" onclick="document.getElementById('header-bg-input').click()">🎨 เปลี่ยนพื้นหลัง</button>
+                <input type="file" id="header-bg-input" accept="image/*" style="display: none;" onchange="loadHeaderBg(event)">
+
+                <div>
+                    <label>ชื่อนวัตกรรม (Catchy Title):</label>
+                    <input type="text" placeholder="เช่น 'แผ่นกรองน้ำรักษ์โลก...'" style="font-size: 16px; font-weight: bold;">
+                </div>
+                <div>
+                    <label>ชื่อวิชาการ (Academic Title):</label>
+                    <input type="text" placeholder="ชื่อเต็มของโครงงาน...">
+                </div>
+                <div style="margin-top: 5px;">
+                    <input type="text" placeholder="รายชื่อผู้จัดทำ..." style="background: transparent; border: none; font-size: 10px; color: rgba(255,255,255,0.9); text-shadow: 1px 1px 2px black;">
+                </div>
+            </div>
+
+            <div class="poster-section">
+                <h3>❤️ ที่มาและหลักการ (Empathy & Science)</h3>
+                <div style="background-color: #FFEBEE; padding: 6px; border-radius: 4px; margin-bottom: 8px; border: 1px dashed #EF9A9A;">
+                    <label style="color: #C62828;">😖 Pain Point (ความเจ็บปวด/ปัญหาเดิม):</label>
+                    <textarea rows="2" oninput="autoResize(this)" placeholder="ใครเดือดร้อน? เขารู้สึกอย่างไร? (Feel) อยากได้อะไร? (Gain)"></textarea>
+                </div>
+                <label>Claim (สมมติฐานหลัก):</label>
+                <textarea rows="1" oninput="autoResize(this)" placeholder="นวัตกรรมทำอะไรได้?"></textarea>
+                <label>Evidence (หลักฐานเชิงประจักษ์):</label>
+                <textarea rows="1" oninput="autoResize(this)" placeholder="ผลการทดลอง/ค่าที่วัดได้..."></textarea>
+                <label>Reasoning (เหตุผลรองรับ):</label>
+                <textarea rows="1" oninput="autoResize(this)" placeholder="อธิบายด้วยหลักวิทยาศาสตร์..."></textarea>
+            </div>
+
+            <div class="poster-section">
+                <h3>💡 ตัวผลิตภัณฑ์ (Innovation)</h3>
+                <div class="image-upload-area" onclick="document.getElementById('product-img-input').click()">
+                    <input type="file" id="product-img-input" accept="image/*" style="display: none;" onchange="loadProductImage(event)">
+                    <img id="preview-img" alt="Project Image">
+                    <div class="upload-placeholder" id="upload-text">
+                        📂 <strong>คลิกเพื่อใส่รูปผลงาน</strong><br>(JPG, PNG)
+                    </div>
+                </div>
+                <div style="margin-top: 8px;">
+                    <label>จุดเด่น (Delighters/MPD):</label>
+                    <textarea rows="1" oninput="autoResize(this)" placeholder="Wow Factor คืออะไร?"></textarea>
+                </div>
+                <div>
+                    <label>การพัฒนา (RMI):</label>
+                    <textarea rows="1" oninput="autoResize(this)" placeholder="ลด/ละ/เลิก อะไรบ้าง?"></textarea>
+                </div>
+            </div>
+
+            <div class="poster-section">
+                <h3>⚙️ กระบวนการ (Process)</h3>
+                <label>ขั้นตอนการผลิต (Flowchart ย่อ):</label>
+                <textarea rows="1" oninput="autoResize(this)" placeholder="1.เตรียม -> 2.ทำ -> 3.เสร็จ"></textarea>
+                <label>การควบคุมคุณภาพ (QC):</label>
+                <textarea rows="1" oninput="autoResize(this)" placeholder="มาตรฐานที่ยอมรับได้..."></textarea>
+                <label>เวลา & ต้นทุน (Time/Cost):</label>
+                <textarea rows="1" oninput="autoResize(this)" placeholder="เวลา / ราคา..."></textarea>
+            </div>
+
+            <div class="poster-section col-span-2">
+                <h3>📈 กลยุทธ์ (Analysis & Strategy)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>จุดแข็ง (Strengths):</label>
+                        <textarea rows="1" oninput="autoResize(this)" placeholder="ข้อดีภายในทีม/ผลงาน..."></textarea>
+                    </div>
+                    <div>
+                        <label>โอกาส (Opportunities):</label>
+                        <textarea rows="1" oninput="autoResize(this)" placeholder="ปัจจัยภายนอกที่สนับสนุน..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="poster-section">
+                <h3>📚 อ้างอิง (Ref.)</h3>
+                <textarea rows="3" oninput="autoResize(this)" placeholder="แหล่งข้อมูล..."></textarea>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        // โหลดรูปผลงาน (Product)
+        function loadProductImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('preview-img');
+                    const text = document.getElementById('upload-text');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    text.style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // โหลดรูปพื้นหลัง Header
+        function loadHeaderBg(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const headerBox = document.getElementById('header-section-box');
+                    headerBox.style.backgroundImage = `url(${e.target.result})`;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleExample() {
+            const x = document.getElementById("example-content");
+            x.style.display = (x.style.display === "none" || x.style.display === "") ? "block" : "none";
+        }
+
+        function saveAsImage() {
+            // ซ่อนปุ่ม UI ชั่วคราว
+            document.querySelector('.btn-example').style.display = 'none';
+            document.getElementById('example-content').style.display = 'none';
+            document.querySelector('.bg-edit-btn').style.display = 'none'; // ซ่อนปุ่มเปลี่ยน BG
+            
+            const element = document.getElementById('capture-target');
+            
+            html2canvas(element, {
+                scale: 2,
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                windowWidth: 1600, 
+                windowHeight: 1200,
+                width: element.offsetWidth,
+                height: element.offsetHeight
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Poster-Blueprint-A4.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // แสดงปุ่มกลับมา
+                document.querySelector('.btn-example').style.display = 'block';
+                document.querySelector('.bg-edit-btn').style.display = 'block';
+            }).catch(err => {
+                alert('เกิดข้อผิดพลาดในการบันทึก: ' + err.message);
+                document.querySelector('.btn-example').style.display = 'block';
+                document.querySelector('.bg-edit-btn').style.display = 'block';
+            });
+        }
+    </script>
+
+</body>
+</html>

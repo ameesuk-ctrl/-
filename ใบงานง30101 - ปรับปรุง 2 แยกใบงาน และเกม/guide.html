@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="คู่มือการเรียนรู้รายวิชาการงานอาชีพ เรื่อง Bio-Business Innovator">
+    <title>คู่มือการเรียนรู้: ถอดรหัสธรรมชาติ ปั้นธุรกิจนวัตกรรม</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. General Settings --- */
+        :root {
+            --primary: #0f766e; /* Teal-700 */
+            --bg-web: #525252;
+            --game-accent: #d97706; /* Amber-600 */
+        }
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: var(--bg-web); 
+            color: #1f2937; 
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* --- 2. A4 Paper Layout --- */
+        .a4-paper {
+            max-width: 210mm;
+            min-height: 297mm;
+            margin: 40px auto;
+            background: white;
+            padding: 20mm 25mm;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* --- 3. Mobile Layout --- */
+        @media screen and (max-width: 768px) {
+            body { background-color: #f3f4f6; }
+            .a4-paper { width: 100%; max-width: 100%; margin: 0; padding: 20px; box-shadow: none; }
+            .no-print-mobile { display: none; }
+        }
+
+        /* --- 4. Print Styles --- */
+        @media print {
+            @page { size: A4; margin: 1.5cm; }
+            body { background: white; -webkit-print-color-adjust: exact; }
+            .a4-paper { margin: 0; padding: 0; width: 100%; box-shadow: none; }
+            .no-print { display: none !important; }
+            .page-break { page-break-before: always; }
+            a { text-decoration: none; color: #000; }
+        }
+
+        /* --- 5. UI Components --- */
+        .section-header { 
+            border-left: 5px solid var(--primary); 
+            padding-left: 12px; 
+            margin-top: 2.5rem; margin-bottom: 1.2rem;
+            color: var(--primary); 
+            font-weight: 700; font-size: 1.35rem;
+        }
+        
+        .interactive-hover:hover {
+            transform: translateY(-2px);
+            transition: transform 0.2s;
+            cursor: pointer;
+            background-color: #f0fdfa;
+        }
+
+        .step-box {
+            background: #f0fdfa; border: 1px solid #ccfbf1; border-radius: 8px;
+            padding: 15px; margin-bottom: 10px; position: relative;
+        }
+        .step-number {
+            position: absolute; top: -10px; left: -10px; width: 30px; height: 30px;
+            background: #0f766e; color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Game Box Style */
+        .game-box {
+            border: 2px solid #fcd34d;
+            background: linear-gradient(135deg, #fffbeb 0%, #fff7ed 100%);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .game-badge {
+            background-color: var(--game-accent);
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* Flowchart Styles */
+        .flow-step {
+            background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+            padding: 8px 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-width: 80px;
+        }
+        .flow-arrow { color: #9ca3af; font-size: 18px; font-weight: bold; }
+        
+        /* APA Reference Style */
+        .reference-list p {
+            text-indent: -36px;
+            padding-left: 36px;
+            margin-bottom: 10px;
+        }
+        
+        /* Floating Back Button */
+        .floating-back-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background-color: #374151;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+        .floating-back-btn:hover {
+            background-color: #1f2937;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <nav class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur shadow-md z-50 px-4 py-3 flex justify-between items-center no-print">
+        <div class="flex flex-col">
+            <span class="font-bold text-teal-800 text-lg">📘 Student Guide</span>
+            <span class="text-xs text-gray-600">รายวิชา ง30101 | ครูอรรถชัย มีสุข</span>
+        </div>
+        <button onclick="playClick(); window.print()" class="bg-teal-700 hover:bg-teal-800 text-white text-sm px-4 py-2 rounded-lg flex items-center gap-2 shadow transition hover:scale-105 active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <span>บันทึก PDF</span>
+        </button>
+    </nav>
+
+    <div class="h-16 no-print"></div> 
+
+    <main id="main-content" class="a4-paper">
+
+        <header class="text-center border-b-4 border-teal-100 pb-10 mb-10">
+            <div class="w-24 h-24 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl shadow-sm animate-bounce" style="animation-duration: 2s;">🌿</div>
+            <p class="text-gray-500 font-medium mb-2 tracking-wide">กลุ่มสาระการเรียนรู้การงานอาชีพ รหัสวิชา ง30101</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-teal-900 mb-4 leading-tight">
+                คู่มือกิจกรรม: ถอดรหัสธรรมชาติ<br>ปั้นธุรกิจนวัตกรรม
+            </h1>
+            <p class="text-xl text-teal-600 font-semibold">(Bio-Business Innovator)</p>
+            
+            <div class="mt-8 inline-block bg-teal-50 px-8 py-5 rounded-xl text-left border border-teal-100 shadow-sm w-full max-w-md mx-auto">
+                <div class="grid grid-cols-[90px_1fr] gap-y-2 text-sm text-gray-700">
+                    <span class="font-bold text-teal-800">โรงเรียน:</span>
+                    <span>เฉลิมพระเกียรติสมเด็จพระศรีนครินทร์ ภูเก็ต</span>
+                    <span class="font-bold text-teal-800">ครูผู้สอน:</span>
+                    <span>นายอรรถชัย มีสุข</span>
+                    <span class="font-bold text-teal-800">ปีการศึกษา:</span>
+                    <span>2568</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="mb-12">
+            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    📑 สารบัญ (Table of Contents)
+                </h2>
+                <ul class="grid md:grid-cols-2 gap-3 text-sm">
+                    <li><a href="#framework" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-teal-700 font-bold"><span class="text-xl">🧠</span> กรอบแนวคิด (Framework)</a></li>
+                    <li><a href="#intro" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-gray-700"><span class="font-bold text-teal-600">1.</span> บทนำ (Introduction)</a></li>
+                    <li><a href="#howtouse" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-gray-700"><span class="font-bold text-teal-600">2.</span> วิธีใช้งานระบบ (How to Use)</a></li>
+                    <li><a href="#knowledge" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-gray-700"><span class="font-bold text-teal-600">3.</span> คลังความรู้ (Knowledge Hub)</a></li>
+                    <li><a href="#timeline" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-gray-700"><span class="font-bold text-teal-600">4.</span> ขั้นตอนกิจกรรม (Roadmap)</a></li>
+                    <li><a href="#game-manual" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 bg-amber-50 border border-amber-100 rounded transition text-amber-800 font-bold"><span class="text-xl">🎮</span> ภารกิจเกม (Game Mission)</a></li>
+                    <li><a href="#assessment" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-gray-700"><span class="font-bold text-teal-600">6.</span> เกณฑ์การประเมิน (Assessment)</a></li>
+                    <li><a href="#references" onmouseenter="playHover()" onclick="playClick()" class="flex items-center gap-2 p-2 hover:bg-teal-50 rounded transition text-gray-700"><span class="font-bold text-teal-600">7.</span> เอกสารอ้างอิง (References)</a></li>
+                </ul>
+            </div>
+        </section>
+
+        <article>
+            
+            <section id="framework">
+                <h2 class="section-header">🧠 กรอบแนวคิดห้องเรียนนวัตกรรม</h2>
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <p class="text-sm text-gray-600 mb-4 text-center">กระบวนการเรียนรู้ที่เชื่อมโยงจาก "ปัญหา" สู่ "ธุรกิจ" ผ่าน 4 ระยะสำคัญ</p>
+                    
+                    <div class="grid gap-4 text-sm">
+                        <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+                            <h3 class="font-bold text-teal-800 mb-2">Phase 1: ค้นหาและถอดรหัส (Discovery)</h3>
+                            <div class="flex flex-wrap gap-2 justify-center items-center">
+                                <div class="flow-step"><strong>ปัญหา</strong><br>(Empathy)</div>
+                                <div class="flow-arrow">➔</div>
+                                <div class="flow-step"><strong>ธรรมชาติ</strong><br>(MPB)</div>
+                                <div class="flow-arrow">➔</div>
+                                <div class="flow-step"><strong>วิทยาศาสตร์</strong><br>(CER)</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h3 class="font-bold text-blue-800 mb-2">Phase 2: ปั้นรูปและวางแผน (Ideation)</h3>
+                            <div class="flex flex-wrap gap-2 justify-center items-center">
+                                <div class="flow-step"><strong>คัดเลือก</strong><br>(MPD)</div>
+                                <div class="flow-arrow">➔</div>
+                                <div class="flow-step"><strong>พัฒนา</strong><br>(RMI)</div>
+                                <div class="flow-arrow">➔</div>
+                                <div class="flow-step"><strong>มาตรฐาน</strong><br>(KPI/TQC)</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <h3 class="font-bold text-indigo-800 mb-2">Phase 3: วางระบบและกลยุทธ์ (Strategy)</h3>
+                            <div class="flex flex-wrap gap-2 justify-center items-center">
+                                <div class="flow-step"><strong>กระบวนการ</strong><br>(SIPOC)</div>
+                                <div class="flow-arrow">➔</div>
+                                <div class="flow-step"><strong>กลยุทธ์</strong><br>(TOWS)</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                            <h3 class="font-bold text-amber-800 mb-2">Phase 4: นำเสนอและสรุปผล (Showcase)</h3>
+                            <div class="flex flex-wrap gap-2 justify-center items-center">
+                                <div class="flow-step"><strong>สื่อสาร</strong><br>(Poster)</div>
+                                <div class="flow-arrow">➔</div>
+                                <div class="flow-step"><strong>ธุรกิจ</strong><br>(BMC)</div>
+                                <div class="flow-arrow text-amber-500">+</div>
+                                <div class="flow-step bg-amber-100 border-amber-300 text-amber-900"><strong>เกมทดสอบ</strong><br>(Quest)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="page-break"></div>
+
+            <section id="intro">
+                <h2 class="section-header">1. บทนำ (Introduction)</h2>
+                <p class="text-justify text-gray-700 mb-4 leading-relaxed">
+                    ยินดีต้อนรับสู่การเดินทางของนวัตกร! กิจกรรมนี้ออกแบบภายใต้แนวคิด <strong>Constructionism</strong> เน้นให้ผู้เรียนสวมบทบาทเป็นนักออกแบบที่ต้องถอดรหัสความลับจากธรรมชาติ (Biomimicry) โดยเฉพาะจาก <em>"ระบบนิเวศป่าชายเลน"</em> เพื่อนำมาแก้ปัญหาและสร้างสรรค์นวัตกรรมที่ยั่งยืน
+                </p>
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 text-blue-800 text-sm">
+                    <strong>🎯 เป้าหมายสูงสุด:</strong> ไม่ใช่แค่การทำใบงานให้เสร็จ แต่คือการฝึก <em>"วิธีคิดแบบนวัตกร"</em> (Innovator Mindset) ที่สามารถเชื่อมโยงความรู้และทำงานร่วมกับผู้อื่นได้
+                </div>
+            </section>
+
+            <section id="howtouse">
+                <h2 class="section-header">2. วิธีใช้งานระบบ (How to Use)</h2>
+                <p class="text-sm text-gray-600 mb-4">เพื่อให้การเรียนรู้ลื่นไหล โปรดปฏิบัติตามขั้นตอนดังนี้:</p>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="step-box interactive-hover" onmouseenter="playHover()">
+                        <div class="step-number">1</div>
+                        <h3 class="font-bold text-teal-800 mb-2">เลือกใบงาน</h3>
+                        <p class="text-xs text-gray-600">เลือกใบงานจากเมนูด้านซ้ายตามลำดับ (เริ่มจากใบงานที่ 1)</p>
+                    </div>
+                    <div class="step-box interactive-hover" onmouseenter="playHover()">
+                        <div class="step-number">2</div>
+                        <h3 class="font-bold text-teal-800 mb-2">บันทึกภาพ</h3>
+                        <p class="text-xs text-gray-600">เมื่อเสร็จแล้ว กดปุ่ม <strong>"📷 บันทึกเป็นภาพ"</strong> ท้ายใบงานเพื่อเก็บไฟล์</p>
+                    </div>
+                    <div class="step-box interactive-hover" onmouseenter="playHover()">
+                        <div class="step-number">3</div>
+                        <h3 class="font-bold text-teal-800 mb-2">ส่งงาน</h3>
+                        <p class="text-xs text-gray-600">ไปที่เมนู <strong>"📤 ส่งผลงาน"</strong> และอัปโหลดไฟล์ภาพ</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="page-break"></div>
+
+            <section id="knowledge">
+                <h2 class="section-header">3. คลังความรู้ (Knowledge Hub)</h2>
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm mb-6">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-700">
+                            <tr>
+                                <th class="p-3 w-1/4">MPB Framework</th>
+                                <th class="p-3">คำอธิบาย & ตัวอย่าง</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr>
+                                <td class="p-3 font-bold text-green-700">M - Morphology</td>
+                                <td class="p-3 text-gray-600">รูปลักษณ์ภายนอก (Ex: รากค้ำจุน, ใบรูปหอก)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-blue-700">P - Property</td>
+                                <td class="p-3 text-gray-600">คุณสมบัติ/เนื้อสาร (Ex: สารแทนนินรสฝาด, ผิวกันน้ำ)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-purple-700">B - Behavior</td>
+                                <td class="p-3 text-gray-600">พฤติกรรม/การทำงาน (Ex: การกรองเกลือ, การหุบใบ)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm">
+                    <h3 class="font-bold text-blue-800 mb-2">🧪 CER Method (การพิสูจน์)</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><strong class="text-blue-600">C (Claim):</strong> ข้อสรุปหรือคำตอบ (เช่น สีทานี้กันน้ำได้จริง)</li>
+                        <li><strong class="text-blue-600">E (Evidence):</strong> หลักฐานเชิงประจักษ์จากผลการทดลอง (เช่น ผล Lab ค่าการดูดซึมน้ำต่ำกว่า 1%)</li>
+                        <li><strong class="text-blue-600">R (Reasoning):</strong> เหตุผลทางวิทยาศาสตร์ที่เชื่อมโยง E ไปหา C</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="timeline">
+                <h2 class="section-header">4. แผนที่การเดินทาง (Roadmap)</h2>
+                <div class="relative pl-8 border-l-4 border-gray-200 space-y-6 my-6">
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-0 w-8 h-8 bg-teal-500 rounded-full border-4 border-white shadow text-white flex items-center justify-center font-bold text-xs">1</div>
+                        <h3 class="font-bold text-teal-800">Phase 1: Discovery</h3>
+                        <p class="text-xs text-gray-500">ใบงาน 1-3: ถอดรหัสธรรมชาติ</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-0 w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow text-white flex items-center justify-center font-bold text-xs">2</div>
+                        <h3 class="font-bold text-blue-800">Phase 2: Ideation</h3>
+                        <p class="text-xs text-gray-500">ใบงาน 4-6: ปั้นไอเดีย</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-0 w-8 h-8 bg-indigo-500 rounded-full border-4 border-white shadow text-white flex items-center justify-center font-bold text-xs">3</div>
+                        <h3 class="font-bold text-indigo-800">Phase 3: Strategy</h3>
+                        <p class="text-xs text-gray-500">ใบงาน 7-8: วางกลยุทธ์</p>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute -left-[42px] top-0 w-8 h-8 bg-amber-500 rounded-full border-4 border-white shadow text-white flex items-center justify-center font-bold text-xs">4</div>
+                        <h3 class="font-bold text-amber-800">Phase 4: Showcase</h3>
+                        <p class="text-xs text-gray-500">ใบงาน 9-10 + Game Quest</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="page-break"></div>
+
+            <section id="game-manual">
+                <h2 class="section-header text-amber-600 border-amber-500" style="border-color: #d97706; color: #d97706;">
+                    <span class="mr-2">🎮</span> 5. ภารกิจพิเศษ: Mangrove Quest
+                </h2>
+                
+                <div class="game-box shadow-lg mt-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="game-badge">MISSION BRIEF</span>
+                            <h3 class="font-bold text-gray-800 text-lg mb-2">ภารกิจ: นักสืบป่าชายเลน</h3>
+                            <p class="text-sm text-gray-700 mb-4">
+                                สวมบทบาทเป็นนักสำรวจ เข้าสู่ป่าชายเลนจำลองเพื่อค้นหาความลับของพืช และจับคู่กับนวัตกรรม (Idea Cards) ให้ถูกต้อง
+                            </p>
+                        </div>
+                        <div class="text-4xl opacity-50">🏆</div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white bg-opacity-60 p-4 rounded-lg border border-amber-200">
+                            <h4 class="font-bold text-amber-800 text-sm mb-2">🕹️ วิธีการเล่น (How to Play)</h4>
+                            <ol class="list-decimal pl-4 text-xs text-gray-700 space-y-2">
+                                <li>คลิกที่ <strong>จุดสนใจ (Map Pin)</strong> บนแผนที่เพื่อเริ่มสำรวจ</li>
+                                <li>อ่านข้อมูล <strong>"Plant Card"</strong> (ข้อมูลทางชีวภาพ)</li>
+                                <li>เลือก <strong>"Idea Card"</strong> ด้านขวาที่สอดคล้องกัน</li>
+                                <li>หากจับคู่ถูก จะได้รับคะแนนและปลดล็อคด่านต่อไป</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-white bg-opacity-60 p-4 rounded-lg border border-amber-200">
+                            <h4 class="font-bold text-amber-800 text-sm mb-2">⭐ การคิดคะแนน (Scoring)</h4>
+                            <ul class="text-xs text-gray-700 space-y-2">
+                                <li class="flex items-center gap-2">
+                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded font-bold">+100 XP</span>
+                                    จับคู่ถูกต้องในครั้งแรก
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold">-10 XP</span>
+                                    จับคู่ผิด (หักคะแนน)
+                                </li>
+                                <li class="mt-2 border-t pt-2 font-bold text-amber-700">
+                                    เป้าหมาย: สะสมให้ครบ 500 XP เพื่อรับเหรียญทอง
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 bg-white p-3 rounded-lg border-l-4 border-blue-500 shadow-sm flex items-start gap-3">
+                        <span class="text-2xl">💾</span>
+                        <div>
+                            <h4 class="font-bold text-sm text-gray-800">สิ่งที่ต้องส่ง (Deliverable)</h4>
+                            <p class="text-xs text-gray-600">
+                                เมื่อเล่นจบเกม ให้กดปุ่ม <strong>"บันทึก Portfolio"</strong> (มุมขวาบนของเกม) 
+                                จะได้ไฟล์ภาพสรุปคะแนน ให้นำภาพนี้ไปส่งในระบบส่งงาน ช่อง <em>"🏆 ภารกิจพิเศษ"</em>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="assessment">
+                <h2 class="section-header">6. เกณฑ์การประเมิน (Assessment)</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse border border-gray-200 rounded-lg">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="border p-3 font-bold text-gray-700">ด้าน (Domain)</th>
+                                <th class="border p-3 font-bold text-gray-700">สิ่งที่วัด (Criteria)</th>
+                                <th class="border p-3 font-bold text-gray-700">เกณฑ์ผ่าน</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="border p-3 font-bold text-teal-800">K: ความรู้</td>
+                                <td class="border p-3">ความถูกต้องและครบถ้วนของใบงานที่ 1-10</td>
+                                <td class="border p-3 text-green-600 font-bold">80% ขึ้นไป</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="border p-3 font-bold text-teal-800">P: ทักษะ</td>
+                                <td class="border p-3">คุณภาพชิ้นงาน (Poster/Prototype) และผลคะแนนจากเกม Quest</td>
+                                <td class="border p-3 text-green-600 font-bold">ระดับดี (300 XP+)</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="border p-3 font-bold text-teal-800">A: เจตคติ</td>
+                                <td class="border p-3">การทำงานเป็นทีม, ความรับผิดชอบ, การส่งงานตรงเวลา</td>
+                                <td class="border p-3 text-green-600 font-bold">ระดับดี</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="page-break"></div>
+
+            <section id="references">
+                <h2 class="section-header text-gray-700 border-gray-400" style="border-color: #4b5563; color: #374151;">
+                    📚 เอกสารอ้างอิง (References)
+                </h2>
+                
+                <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm text-sm text-gray-700 leading-relaxed reference-list">
+                    <p class="mb-6 text-gray-500 italic text-xs">การอ้างอิงตามรูปแบบ APA (American Psychological Association) 7th Edition</p>
+                    
+                    <h3 class="font-bold text-gray-800 mt-4 mb-2">ภาษาไทย</h3>
+                    
+                    <p>กระทรวงศึกษาธิการ. (2560). <em>ตัวชี้วัดและสาระการเรียนรู้แกนกลาง กลุ่มสาระการเรียนรู้การงานอาชีพ (ฉบับปรับปรุง พ.ศ. 2560)</em>. โรงพิมพ์ชุมนุมสหกรณ์การเกษตรแห่งประเทศไทย.</p>
+                    
+                    <p>กรมทรัพยากรทางทะเลและชายฝั่ง. (2564). <em>คู่มือความรู้เรื่องป่าชายเลน: พันธุ์ไม้และระบบนิเวศ</em>. กระทรวงทรัพยากรธรรมชาติและสิ่งแวดล้อม.</p>
+                    
+                    <p>วิจารณ์ พานิช. (2555). <em>วิถีสร้างการเรียนรู้เพื่อศิษย์ ในศตวรรษที่ 21</em>. มูลนิธิสดศรี-สฤษดิ์วงศ์.</p>
+
+                    <h3 class="font-bold text-gray-800 mt-6 mb-2">ภาษาอังกฤษ (English)</h3>
+
+                    <p>Benyus, J. M. (1997). <em>Biomimicry: Innovation inspired by nature</em>. William Morrow & Co.</p>
+
+                    <p>Hasso Plattner Institute of Design at Stanford. (n.d.). <em>An Introduction to Design Thinking PROCESS GUIDE</em>. Stanford University.</p>
+
+                    <p>McNeill, K. L., & Krajcik, J. S. (2012). <em>Supporting Grade 5-8 Students in Constructing Explanations in Science: The Claim, Evidence, and Reasoning Framework for Talk and Writing</em>. Pearson.</p>
+
+                    <p>Osterwalder, A., & Pigneur, Y. (2010). <em>Business Model Generation: A Handbook for Visionaries, Game Changers, and Challengers</em>. John Wiley & Sons.</p>
+
+                    <p>Papert, S., & Harel, I. (1991). <em>Constructionism</em>. Ablex Publishing.</p>
+
+                    <p>Simon, K. (2015). <em>The TOWS Matrix: A Tool for Situational Analysis</em>. Management Models.</p>
+                </div>
+            </section>
+
+        </article>
+
+        <footer class="mt-16 pt-8 border-t border-gray-300 text-center">
+            <p class="text-gray-600 italic text-sm max-w-lg mx-auto mb-4">
+                "ธรรมชาติคือห้องสมุดที่ใหญ่ที่สุด การเลียนแบบธรรมชาติ (Biomimicry) <br>จึงไม่ใช่แค่การลอกเลียนแบบรูปทรง แต่คือการเข้าใจวิธีคิดเพื่อความยั่งยืน"
+            </p>
+            <div class="text-xs text-gray-400">
+                &copy; 2025 Innovation Learning Platform | Created for Educational Purpose Only
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playClick() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playHover() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+    </script>
+
+</body>
+</html>

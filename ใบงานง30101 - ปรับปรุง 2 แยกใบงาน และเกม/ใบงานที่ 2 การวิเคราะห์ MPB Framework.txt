@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบงาน MPB Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #00695C; /* Teal Green for Nature/Science */
+            --secondary-color: #4DB6AC;
+            --bg-color: #E0F2F1; 
+            --border-color: #B2DFDB;
+            --text-color: #263238;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eceff1;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-container {
+            width: 210mm; /* A4 Size */
+            min-height: 297mm;
+            background: white;
+            margin: 0 auto;
+            padding: 25mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header Section */
+        header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .sub-header {
+            font-size: 14px;
+            color: #546E7A;
+            margin-top: 5px;
+        }
+
+        /* Input Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            border: 1px solid #90A4AE;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        /* MPB Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        th, td {
+            border: 1px solid #B0BEC5;
+            padding: 12px;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .col-m { border-left: 5px solid #FF7043; } /* Orange for Shape */
+        .col-p { border-left: 5px solid #42A5F5; } /* Blue for Chemistry */
+        .col-b { border-left: 5px solid #66BB6A; } /* Green for Action */
+
+        .icon-header { font-size: 20px; display: block; margin-bottom: 5px; }
+        
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1px dashed #ccc;
+            padding: 8px;
+            font-family: 'Sarabun', sans-serif;
+            resize: vertical;
+            box-sizing: border-box;
+            font-size: 13px;
+            background-color: #fafafa;
+        }
+        
+        textarea:focus {
+            outline: 2px solid var(--secondary-color);
+            background-color: white;
+        }
+
+        /* --- Sketch Area (Updated Styles) --- */
+        .sketch-area {
+            width: 100%;
+            height: 250px; /* เพิ่มความสูงเล็กน้อย */
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #aaa;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden; /* ป้องกันภาพล้น */
+            cursor: pointer; /* เปลี่ยนเมาส์เป็นรูปมือ */
+            transition: background-color 0.3s;
+        }
+
+        .sketch-area:hover {
+            background-color: #f1f8e9; /* เปลี่ยนสีพื้นหลังเมื่อเอาเมาส์ชี้ */
+            border-color: var(--primary-color);
+        }
+
+        .sketch-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2px 8px;
+            z-index: 10; /* ให้อยู่บนสุด */
+            border-radius: 4px;
+            pointer-events: none; /* ไม่ให้ขวางการคลิก */
+        }
+
+        /* Style สำหรับรูปที่อัปโหลด */
+        #uploaded-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none; /* ซ่อนไว้ก่อน */
+        }
+
+        #upload-placeholder {
+            text-align: center;
+            pointer-events: none;
+        }
+
+        /* Button Container Styles */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Sarabun', sans-serif;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+
+        .btn-print {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-image {
+            background-color: #1976D2; /* Blue */
+            color: white;
+        }
+
+        @media print {
+            body { background-color: white; padding: 0; display: block; }
+            .page-container { box-shadow: none; margin: 0; width: 100%; padding: 20px; }
+            .action-buttons { display: none; } /* Hide buttons when printing */
+            .sketch-area { border: 1px solid #ccc; } /* เส้นทึบบางๆ เวลาพิมพ์ */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-buttons">
+        <button class="btn btn-print" onclick="window.print()">
+            🖨️ พิมพ์ / Save PDF
+        </button>
+        <button class="btn btn-image" onclick="saveAsImage()">
+            📸 บันทึกเป็นภาพ (PNG)
+        </button>
+    </div>
+
+    <div class="page-container" id="capture-target">
+        <header>
+            <h1>ใบงาน: การวิเคราะห์ MPB Framework</h1>
+            <div class="sub-header">Biomimicry Decoding: ถอดรหัสลับจากธรรมชาติสู่นวัตกรรม</div>
+        </header>
+
+        <div class="info-grid">
+            <div class="form-group">
+                <label>ชื่อผู้ศึกษา/กลุ่ม:</label>
+                <input type="text" class="form-control" placeholder="ชื่อ-นามสกุล หรือ ชื่อกลุ่ม">
+            </div>
+            <div class="form-group">
+                <label>พืช/สิ่งมีชีวิตที่ศึกษา:</label>
+                <input type="text" class="form-control" placeholder="เช่น เหงือกปลาหมอ, แสมสาร">
+            </div>
+        </div>
+
+        <section>
+            <div class="sketch-area" onclick="document.getElementById('file-input').click()">
+                
+                <div class="sketch-label">📸 ภาพร่าง/ภาพถ่าย (คลิกเพื่ออัปโหลด)</div>
+                
+                <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="loadImage(event)">
+                
+                <div id="upload-placeholder">
+                    <p style="font-size: 40px; margin: 0;">☁️</p>
+                    <p>คลิกที่นี่เพื่ออัปโหลดรูปภาพ<br><small>หรือวาดใส่กระดาษแล้วถ่ายรูปมาแปะ</small></p>
+                </div>
+
+                <img id="uploaded-image" src="" alt="Uploaded Sketch">
+            </div>
+        </section>
+
+        <section>
+            <h2>ตารางวิเคราะห์ MPB (Morphology - Property - Behavior)</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">คำชี้แจง: วิเคราะห์ลักษณะเด่นของพืชใน 3 มิติ และระบุว่าสิ่งนั้นสามารถนำไปแก้ปัญหา (Pain Point) ได้อย่างไร</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">มิติการวิเคราะห์</th>
+                        <th style="width: 40%;">ข้อมูล Insight ที่ค้นพบ<br><small>(สิ่งที่พืชมี/เป็น)</small></th>
+                        <th style="width: 45%;">การต่อยอดแนวคิดนวัตกรรม<br><small>(เราจะนำไปใช้อย่างไร?)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-m" style="text-align: center;">
+                            <span class="icon-header">🦴</span>
+                            <strong>Morphology</strong><br>
+                            <small>(รูปลักษณ์/โครงสร้าง)</small>
+                        </td>
+                        <td>
+                            <textarea placeholder="เช่น โครงสร้างรากสานกันแน่น, ใบมีผิวเป็นมันเงา, รูปทรงที่ลู่ลม..."></textarea>
+                        </td>
+                        <td>
+                            <textarea placeholder="เช่น ออกแบบโครงสร้างกันกระแทก, พื้นผิวลดแรงเสียดทาน..."></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-p" style="text-align: center;">
+                            <span class="icon-header">🧪</span>
+                            <strong>Property</strong><br>
+                            <small>(คุณสมบัติ/เคมี/วัสดุ)</small>
+                        </td>
+                        <td>
+                            <textarea placeholder="เช่น มีสารแทนนินรสฝาด, มียางเหนียว, ผิวใบไม่เปียกน้ำ (Hydrophobic)..."></textarea>
+                        </td>
+                        <td>
+                            <textarea placeholder="เช่น สารสกัดยับยั้งแบคทีเรีย, สารเคลือบกันน้ำ..."></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-b" style="text-align: center;">
+                            <span class="icon-header">⚙️</span>
+                            <strong>Behavior</strong><br>
+                            <small>(พฤติกรรม/กระบวนการ)</small>
+                        </td>
+                        <td>
+                            <textarea placeholder="เช่น การคายเกลือออกทางใบ, การหุบใบเมื่อถูกสัมผัส, การเปลี่ยนสี..."></textarea>
+                        </td>
+                        <td>
+                            <textarea placeholder="เช่น ระบบกรองที่ทำความสะอาดตัวเองได้, เซ็นเซอร์ตรวจจับแรงสั่นสะเทือน..."></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section style="margin-top: 30px; border: 1px solid #B2DFDB; padding: 20px; border-radius: 8px; background: #F0F4C3;">
+            <h3 style="color: var(--primary-color); margin-top: 0; font-size: 16px;">💡 สรุปแนวคิดนวัตกรรม (Innovation Concept)</h3>
+            <p style="font-size: 13px;">จากการวิเคราะห์ MPB ข้างต้น สิ่งที่น่าสนใจที่สุดที่จะนำไปพัฒนาต่อคืออะไร?</p>
+            <textarea style="background: white; border: 1px solid #ccc; height: 80px;" placeholder="ระบุแนวคิดสั้นๆ (เช่น 'จะสร้างแผ่นกรองน้ำที่ใช้สารแทนนินจากเหงือกปลาหมอ...') เพื่อเตรียมนำไปทำใบงาน MPD Canvas ต่อไป"></textarea>
+        </section>
+    </div>
+
+    <script>
+        // 1. ฟังก์ชันสำหรับโหลดรูปภาพมาแสดง
+        function loadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.getElementById('uploaded-image');
+                    const placeholder = document.getElementById('upload-placeholder');
+                    
+                    img.src = e.target.result;
+                    img.style.display = 'block'; // เอารูปออกมาโชว์
+                    placeholder.style.display = 'none'; // ซ่อนข้อความ
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 2. ฟังก์ชันบันทึกหน้าเว็บเป็นรูปภาพ
+        function saveAsImage() {
+            const element = document.getElementById('capture-target');
+            
+            html2canvas(element, {
+                scale: 2, 
+                backgroundColor: "#ffffff", 
+                useCORS: true,
+                scrollY: -window.scrollY 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'MPB-Analysis-Worksheet.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Error capturing image:", err);
+                alert("เกิดข้อผิดพลาดในการบันทึกภาพ");
+            });
+        }
+    </script>
+
+</body>
+</html>

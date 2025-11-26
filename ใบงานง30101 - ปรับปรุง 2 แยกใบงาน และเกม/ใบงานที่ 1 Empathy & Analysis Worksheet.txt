@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กิจกรรม: เจาะลึกเส้นทาง นักคิด..เพื่อโลก </title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        /* --- 1. Styles & Variables --- */
+        :root {
+            --primary: #2E7D32;
+            --secondary: #81C784;
+            --accent: #FFB74D;
+            --bg: #F1F8E9;
+            --card-bg: #ffffff;
+            --text: #37474F;
+            --blue-btn: #2196F3;
+            --example-bg: #FFF8E1;
+            --pain-bg: #FFEBEE;
+            --gain-bg: #E3F2FD;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%; max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden; position: relative;
+            display: flex; flex-direction: column;
+        }
+
+        /* Header */
+        .header { background-color: var(--primary); color: white; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .progress-bar { display: flex; background: #ddd; height: 10px; }
+        .progress-fill { background: var(--accent); width: 25%; transition: width 0.3s ease; }
+
+        /* Content */
+        .step-content { padding: 30px; flex-grow: 1; display: none; animation: fadeIn 0.5s; }
+        .step-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2 { color: var(--primary); border-bottom: 2px solid var(--secondary); padding-bottom: 10px; margin-top: 0; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Inputs */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: 'Sarabun'; font-size: 14px; box-sizing: border-box; resize: vertical; }
+        input:focus, textarea:focus, select:focus { outline: 2px solid var(--secondary); border-color: transparent; }
+
+        /* Custom Grids */
+        .empathy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .quadrant { background: #FAFAFA; border: 1px dashed #ccc; padding: 15px; border-radius: 8px; }
+        .quadrant h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--primary); }
+
+        .analysis-section { padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #eee; }
+        .pain-box { background-color: var(--pain-bg); border-color: #FFCDD2; }
+        .gain-box { background-color: var(--gain-bg); border-color: #BBDEFB; }
+        .analysis-header { display: flex; align-items: center; margin-bottom: 10px; font-weight: bold; font-size: 18px; }
+
+        /* Example System */
+        .btn-toggle-example { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .btn-toggle-example:hover { background: var(--accent); color: white; }
+        
+        .example-box { display: none; background-color: var(--example-bg); border: 1px dashed #FFECB3; border-radius: 8px; padding: 15px; margin-bottom: 20px; font-size: 14px; color: #5D4037; }
+        
+        .btn-copy-ex {
+            background-color: #FF9800; color: white; border: none; padding: 8px 15px; 
+            border-radius: 5px; cursor: pointer; font-size: 13px; margin-top: 10px; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-copy-ex:hover { background-color: #F57C00; }
+
+        /* Navigation */
+        .footer-nav { padding: 20px; border-top: 1px solid #eee; display: flex; justify-content: space-between; background: white; flex-wrap: wrap; gap: 10px; }
+        .btn { padding: 10px 25px; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; font-family: 'Sarabun'; transition: all 0.2s; }
+        .btn-back { background: #ddd; color: #333; }
+        .btn-next { background: var(--primary); color: white; }
+        .btn-print { background: var(--accent); color: white; }
+        .btn-img { background: var(--blue-btn); color: white; }
+        .btn:hover { transform: scale(1.05); opacity: 0.9; }
+
+        /* --- 4. A4 Fixed Layout (Hidden until print) --- */
+        #print-area-wrapper {
+            display: none; justify-content: center;
+            background: #525659; padding: 20px; margin-top: 20px; overflow-x: auto;
+        }
+        .a4-page {
+            width: 210mm; min-height: 297mm; background: white; padding: 20mm;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2); box-sizing: border-box; color: black; position: relative;
+        }
+        .a4-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .a4-grid-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 5px; }
+        .a4-grid-4col { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 5px; margin-top: 5px; }
+        .a4-card { border: 1px solid #ccc; padding: 10px; border-radius: 5px; font-size: 12px; word-wrap: break-word; }
+        .a4-header { border-bottom: 2px solid var(--primary); margin-bottom: 15px; padding-bottom: 10px; }
+        .a4-label { font-weight: bold; color: var(--primary); font-size: 12px; display: block; margin-bottom: 3px; }
+        
+        @media (max-width: 600px) { .empathy-grid { grid-template-columns: 1fr; } }
+        @media print {
+            body { background: white; padding: 0; display: block; }
+            .container, .header, .footer-nav { display: none !important; }
+            #print-area-wrapper { display: block !important; padding: 0; margin: 0; background: white; }
+            .a4-page { width: 100%; min-height: auto; box-shadow: none; margin: 0; padding: 0; }
+            @page { size: A4; margin: 1.5cm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🌱 เจาะลึกเส้นทาง นักคิด..เพื่อโลก </h1>
+        <p>ภารกิจ: เปลี่ยนปัญหาชุมชนให้เป็นนวัตกรรมด้วยพลังธรรมชาติ</p>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="step-content active" id="step-1">
+        <h2>
+            1. Empathy & Analysis 
+            <button class="btn-toggle-example" onclick="toggleExample('ex-1', this)">💡 ดูตัวอย่าง</button>
+        </h2>
+        
+        <div class="example-box" id="ex-1">
+            <h4>📝 ตัวอย่าง: ป้าแดง แม่ค้ารถเข็นไก่ทอด</h4>
+            <ul>
+                <li><strong>Persona:</strong> แม่ค้าไก่ทอด อายุ 50 ปี</li>
+                <li><strong>Pain:</strong> กำจัดน้ำมันเก่ายาก ท่อตัน เหม็น</li>
+                <li><strong>Need:</strong> ถังดักไขมันพกพาที่ติดตั้งกับรถเข็นได้</li>
+            </ul>
+            <button class="btn-copy-ex" onclick="fillExample(1)">📝 นำข้อมูลตัวอย่างไปใส่ (เขียนทับได้)</button>
+        </div>
+
+        <div class="form-group">
+            <label>👤 กลุ่มเป้าหมาย (Persona):</label>
+            <textarea id="inp-persona" rows="2" placeholder="ตัวอย่าง: ป้าแดง แม่ค้ารถเข็นไก่ทอด อายุ 50 ปี ขายทุกวัน 16.00-22.00 น."></textarea>
+        </div>
+
+        <div class="empathy-grid">
+            <div class="quadrant">
+                <h3>👀 SEE (สิ่งที่เห็น)</h3>
+                <textarea id="inp-see" rows="2" placeholder="ตัวอย่าง: เห็นคราบน้ำมันดำๆ บนพื้น, เห็นท่อระบายน้ำตัน..."></textarea>
+            </div>
+            <div class="quadrant">
+                <h3>👂 HEAR (สิ่งที่ได้ยิน)</h3>
+                <textarea id="inp-hear" rows="2" placeholder="ตัวอย่าง: ได้ยินป้าบ่นว่า 'เทศกิจมาตรวจอีกแล้ว', ลูกค้าบ่น 'เหม็นจัง'..."></textarea>
+            </div>
+            <div class="quadrant">
+                <h3>✋ DO (สิ่งที่เขาทำ)</h3>
+                <textarea id="inp-do" rows="2" placeholder="ตัวอย่าง: แอบเทน้ำมันลงท่อตอนดึก, เอาถุงพลาสติกมารอง..."></textarea>
+            </div>
+            <div class="quadrant">
+                <h3>🗣️ SAY (สิ่งที่เขาพูด)</h3>
+                <textarea id="inp-say" rows="2" placeholder="ตัวอย่าง: 'ไม่รู้จะเอาไปทิ้งไหน มันหนัก', 'ถังดักมันแพง'"></textarea>
+            </div>
+        </div>
+
+        <div class="analysis-section pain-box">
+            <div class="analysis-header"><span>⚡</span> Pain Point Analysis</div>
+            <div class="form-group">
+                <label>⚡ ปัญหาหลัก (Problem):</label>
+                <textarea id="inp-pain-problem" rows="2" placeholder="ตัวอย่าง: การกำจัดน้ำมันเก่าบนรถเข็นทำได้ยากและสกปรก"></textarea>
+            </div>
+            <div class="form-group">
+                <label>🔥 ผลกระทบ (Impact):</label>
+                <textarea id="inp-pain-impact" rows="2" placeholder="ตัวอย่าง: เสี่ยงโดนปรับ, ลูกค้าหายเพราะกลิ่น, ท่อระบายน้ำตัน"></textarea>
+            </div>
+            <div class="form-group">
+                <label>🔎 รากเหง้าของปัญหา (Root Cause):</label>
+                <textarea id="inp-pain-root" rows="2" placeholder="ตัวอย่าง: เพราะไม่มีถังดักไขมันที่ 'พกพาได้' และติดตั้งกับรถเข็น"></textarea>
+            </div>
+        </div>
+
+        <div class="analysis-section gain-box">
+            <div class="analysis-header"><span>💎</span> Gain Analysis</div>
+            <div class="form-group">
+                <label>💎 ความต้องการ (Need/Gain):</label>
+                <textarea id="inp-gain-need" rows="2" placeholder="ตัวอย่าง: อุปกรณ์แยกน้ำมันที่เบา ติดตั้งง่าย และราคาถูก"></textarea>
+            </div>
+            <div class="form-group">
+                <label>⭐ ระดับความสำคัญ:</label>
+                <select id="inp-gain-level">
+                    <option>🔴 จำเป็นต้องมี (Must Have)</option>
+                    <option>🟡 ควรจะมี (Should Have)</option>
+                    <option>🟢 มีก็ดี (Nice to Have)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>🌈 ประโยชน์ที่ได้รับ (Benefit):</label>
+                <textarea id="inp-gain-benefit" rows="2" placeholder="ตัวอย่าง: เก็บร้านไวขึ้น, ขายน้ำมันเก่าได้เงิน, ไม่โดนค่าปรับ"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-content" id="step-2">
+        <h2>
+            2. Nature Decoder 
+            <button class="btn-toggle-example" onclick="toggleExample('ex-2', this)">💡 ดูตัวอย่าง</button>
+        </h2>
+        <div class="example-box" id="ex-2">
+            <h4>📝 ตัวอย่าง: รากโกงกาง</h4>
+            <p>พืชที่มีรากซับซ้อน ช่วยกรองตะกอนและชะลอความเร็วน้ำ</p>
+            <button class="btn-copy-ex" onclick="fillExample(2)">📝 นำข้อมูลตัวอย่างไปใส่ (เขียนทับได้)</button>
+        </div>
+        
+        <div class="form-group">
+            <label>🌿 ต้นแบบธรรมชาติ:</label>
+            <input type="text" id="inp-plant" placeholder="ตัวอย่าง: ต้นโกงกาง (Mangrove)">
+        </div>
+        <div class="form-group">
+            <label>🦴 Morphology (รูปลักษณ์):</label>
+            <textarea id="inp-m" rows="2" placeholder="ตัวอย่าง: รากแขนงสานกันเป็นร่างแหหนาแน่น มีความซับซ้อน"></textarea>
+        </div>
+        <div class="form-group">
+            <label>🧪 Property (คุณสมบัติ):</label>
+            <textarea id="inp-p" rows="2" placeholder="ตัวอย่าง: มีรูพรุน ผิวขรุขระ กรองตะกอนได้ดี"></textarea>
+        </div>
+        <div class="form-group">
+            <label>⚙️ Behavior (พฤติกรรม):</label>
+            <textarea id="inp-b" rows="2" placeholder="ตัวอย่าง: ชะลอความเร็วน้ำเพื่อดักจับตะกอนดินให้ตกตะกอน"></textarea>
+        </div>
+    </div>
+
+    <div class="step-content" id="step-3">
+        <h2>
+            3. Innovation Synthesis 
+            <button class="btn-toggle-example" onclick="toggleExample('ex-3', this)">💡 ดูตัวอย่าง</button>
+        </h2>
+        <div class="example-box" id="ex-3">
+            <h4>📝 ตัวอย่าง: Grease Fighter</h4>
+            <p>นวัตกรรมแผ่นกรองไขมันเลียนแบบรากโกงกาง</p>
+            <button class="btn-copy-ex" onclick="fillExample(3)">📝 นำข้อมูลตัวอย่างไปใส่ (เขียนทับได้)</button>
+        </div>
+
+        <div class="form-group">
+            <label>💡 ชื่อไอเดียนวัตกรรม:</label>
+            <input type="text" id="inp-idea-name" placeholder="ตัวอย่าง: Grease Fighter (นักสู้ไขมัน)">
+        </div>
+        <div class="form-group">
+            <label>📝 คอนเซปต์ (Concept):</label>
+            <textarea id="inp-concept" rows="4" placeholder="ตัวอย่าง: ใช้โครงสร้างแบบ 'รากโกงกาง' มาทำแผ่นกรองซ้อนกันหลายชั้น ติดตั้งใต้รถเข็น เพื่อดักจับไขมันก่อนลงท่อ ช่วยให้ป้าแดงเก็บร้านง่ายและขายน้ำมันเก่าได้"></textarea>
+        </div>
+        <div class="form-group">
+            <label>🎨 ภาพร่าง (Sketch):</label>
+            <input type="file" id="inp-sketch" accept="image/*" onchange="previewImage()" style="margin-bottom:10px;">
+            <div style="border: 2px dashed #ccc; height: 200px; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; background:#fafafa;">
+                <span id="sketch-placeholder" style="color:#aaa;">(อัปโหลดภาพร่าง หรือ เว้นว่างไว้วาดเอง)</span>
+                <img id="sketch-preview" src="" style="display:none; max-width:100%; max-height:100%; object-fit:contain;">
+            </div>
+        </div>
+    </div>
+
+    <div class="step-content" id="step-4">
+        <div style="text-align:center; margin-bottom:20px;">
+            <span style="font-size:40px;">🏆</span>
+            <h2>ภารกิจสำเร็จ!</h2>
+            <p>ตรวจสอบความถูกต้องด้านล่าง</p>
+        </div>
+
+        <div id="print-area-wrapper">
+            <div id="a4-target" class="a4-page">
+                <div class="a4-header">
+                    <h1 style="margin:0; color:#2E7D32; font-size:22px;">ใบงาน: Eco-Innovation Analysis</h1>
+                    <div style="font-size:14px;"><strong>ผู้จัดทำ:</strong> <span id="out-name">_________________</span></div>
+                </div>
+
+                <div style="background:#f9f9f9; padding:5px 10px; margin-bottom:10px;">
+                    <strong style="color:#333;">1. เป้าหมายการศึกษา (Persona & Observation)</strong>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <span class="a4-label">กลุ่มเป้าหมาย:</span>
+                    <span id="out-persona" class="a4-value">-</span>
+                </div>
+                <div class="a4-grid-4col">
+                    <div class="a4-card"><b>SEE:</b><br><span id="out-see">-</span></div>
+                    <div class="a4-card"><b>HEAR:</b><br><span id="out-hear">-</span></div>
+                    <div class="a4-card"><b>DO:</b><br><span id="out-do">-</span></div>
+                    <div class="a4-card"><b>SAY:</b><br><span id="out-say">-</span></div>
+                </div>
+                <div class="a4-grid-2col">
+                    <div class="a4-card" style="background: #FFEBEE; border-color: #FFCDD2;">
+                        <strong style="color:#C62828;">⚡ Pain Point</strong>
+                        <div style="margin-top:5px;"><span class="a4-label">ปัญหา:</span><span id="out-pain-problem">-</span></div>
+                        <div style="margin-top:3px;"><span class="a4-label">ผลกระทบ:</span><span id="out-pain-impact">-</span></div>
+                        <div style="margin-top:3px;"><span class="a4-label">รากเหง้า:</span><span id="out-pain-root">-</span></div>
+                    </div>
+                    <div class="a4-card" style="background: #E3F2FD; border-color: #BBDEFB;">
+                        <strong style="color:#1565C0;">💎 Gain</strong>
+                        <div style="margin-top:5px;"><span class="a4-label">ความต้องการ:</span><span id="out-gain-need">-</span></div>
+                        <div style="margin-top:3px;"><span class="a4-label">ระดับ:</span><span id="out-gain-level">-</span></div>
+                        <div style="margin-top:3px;"><span class="a4-label">ประโยชน์:</span><span id="out-gain-benefit">-</span></div>
+                    </div>
+                </div>
+
+                <div style="background:#f9f9f9; padding:5px 10px; margin-top:15px; margin-bottom:10px;">
+                    <strong style="color:#333;">2. ถอดรหัสธรรมชาติ (Nature Decoder)</strong>
+                </div>
+                <div><span class="a4-label">ต้นแบบ:</span> <span id="out-plant" style="font-weight:bold;">-</span></div>
+                <div class="a4-grid-3col">
+                    <div class="a4-card"><b>Morphology:</b><br><span id="out-m">-</span></div>
+                    <div class="a4-card"><b>Property:</b><br><span id="out-p">-</span></div>
+                    <div class="a4-card"><b>Behavior:</b><br><span id="out-b">-</span></div>
+                </div>
+
+                <div style="background:#f9f9f9; padding:5px 10px; margin-top:15px; margin-bottom:10px;">
+                    <strong style="color:#333;">3. นวัตกรรม (Innovation)</strong>
+                </div>
+                <div style="border:1px solid #C5E1A5; padding:10px; border-radius:5px;">
+                    <span class="a4-label">ชื่อนวัตกรรม:</span>
+                    <span id="out-idea-name" style="font-size:16px; font-weight:bold; color:#2E7D32;">-</span>
+                    <div style="margin-top:8px; border-top:1px solid #eee; padding-top:5px;">
+                        <span class="a4-label">Concept:</span>
+                        <div id="out-concept" class="a4-value">-</div>
+                    </div>
+                    <div style="margin-top:10px; border:1px dashed #ccc; height: 200px; display:flex; align-items:center; justify-content:center;">
+                         <img id="out-sketch-img" src="" style="display:none; max-width:100%; max-height:100%; object-fit:contain;">
+                         <span id="out-sketch-text" style="color:#ccc; font-size:12px;">(พื้นที่รูปภาพ)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <button class="btn btn-back" id="btn-back" onclick="prevStep()" disabled>⬅ ย้อนกลับ</button>
+        <div id="page-indicator" style="align-self:center; font-weight:bold; color:#aaa;">1 / 4</div>
+        <button class="btn btn-next" id="btn-next" onclick="nextStep()">ถัดไป ➡</button>
+        <div id="final-buttons" style="display:none; gap:10px;">
+            <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์ PDF</button>
+            <button class="btn btn-img" onclick="saveAsImage()">📸 บันทึกเป็นภาพ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    // ข้อมูลตัวอย่าง (Editable Example Data)
+    const examples = {
+        1: {
+            'persona': 'ป้าแดง แม่ค้ารถเข็นไก่ทอด อายุ 50 ปี ขายทุกวัน 16.00-22.00 น. ย่านชุมชนแออัด',
+            'see': 'เห็นคราบน้ำมันดำๆ บนพื้น, เห็นท่อระบายน้ำตัน, เห็นหนูและแมลงสาบมารุม',
+            'hear': 'ได้ยินป้าบ่นว่า "เทศกิจมาตรวจอีกแล้ว", ลูกค้าบ่น "เหม็นจัง", เพื่อนบ้านบ่นเรื่องท่อตัน',
+            'do': 'แอบเทน้ำมันลงท่อตอนดึก, เอาถุงพลาสติกมารองใต้รถเข็น, ใช้กระดาษหนังสือพิมพ์เช็ด',
+            'say': '"ไม่รู้จะเอาไปทิ้งไหน มันหนัก", "ถังดักมันแพง ซื้อไม่ไหว", "อยากขายน้ำมันเก่าแต่ไม่มีคนรับซื้อถึงที่"',
+            'pain-problem': 'การกำจัดน้ำมันเก่าบนรถเข็นทำได้ยากและสกปรก',
+            'pain-impact': 'เสี่ยงโดนปรับ, ลูกค้าหายเพราะกลิ่น, ท่อระบายน้ำตันส่งผลเสียต่อชุมชน',
+            'pain-root': 'เพราะไม่มีถังดักไขมันที่ "พกพาได้" และติดตั้งกับรถเข็นที่มีพื้นที่จำกัด',
+            'gain-need': 'อุปกรณ์แยกน้ำมันที่เบา ติดตั้งง่าย และราคาถูก',
+            'gain-level': '🔴 จำเป็นต้องมี (Must Have)',
+            'gain-benefit': 'เก็บร้านไวขึ้น, ขายน้ำมันเก่าได้เงิน, ไม่โดนค่าปรับ, ชุมชนสะอาดขึ้น'
+        },
+        2: {
+            'plant': 'ต้นโกงกาง (Mangrove)',
+            'm': 'รากแขนงสานกันเป็นร่างแหหนาแน่น มีความซับซ้อน',
+            'p': 'มีรูพรุน ผิวขรุขระ กรองตะกอนได้ดี ทนความเค็ม',
+            'b': 'ชะลอความเร็วน้ำเพื่อดักจับตะกอนดินให้ตกตะกอนก่อนลงทะเล'
+        },
+        3: {
+            'idea-name': 'Grease Fighter (นักสู้ไขมัน)',
+            'concept': 'ใช้โครงสร้างแบบ "รากโกงกาง" มาทำแผ่นกรองซ้อนกันหลายชั้น ติดตั้งใต้รถเข็น เพื่อดักจับไขมันก่อนลงท่อ ช่วยให้ป้าแดงเก็บร้านง่ายและขายน้ำมันเก่าได้'
+        }
+    };
+
+    function fillExample(step) {
+        const data = examples[step];
+        if (!data) return;
+        
+        for (const [key, value] of Object.entries(data)) {
+            const input = document.getElementById(`inp-${key}`);
+            if (input) input.value = value;
+        }
+        alert("📝 กรอกข้อมูลตัวอย่างเรียบร้อย! คุณสามารถแก้ไขข้อความต่อได้เลยครับ");
+    }
+
+    function toggleExample(id, btn) {
+        const box = document.getElementById(id);
+        const isHidden = box.style.display === "none" || box.style.display === "";
+        box.style.display = isHidden ? "block" : "none";
+        btn.innerHTML = isHidden ? "🙈 ซ่อนตัวอย่าง" : "💡 ดูตัวอย่าง";
+        btn.style.background = isHidden ? "var(--accent)" : "none";
+        btn.style.color = isHidden ? "white" : "var(--accent)";
+    }
+
+    function previewImage() {
+        const file = document.getElementById('inp-sketch').files[0];
+        const preview = document.getElementById('sketch-preview');
+        const placeholder = document.getElementById('sketch-placeholder');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function showStep(step) {
+        document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step-${step}`).classList.add('active');
+        
+        const percentage = (step / totalSteps) * 100;
+        document.getElementById('progress').style.width = `${percentage}%`;
+        document.getElementById('btn-back').disabled = (step === 1);
+        
+        const nextBtn = document.getElementById('btn-next');
+        const finalBtns = document.getElementById('final-buttons');
+        const printWrapper = document.getElementById('print-area-wrapper');
+
+        if (step === totalSteps) {
+            nextBtn.style.display = 'none';
+            finalBtns.style.display = 'flex';
+            printWrapper.style.display = 'flex'; // Show A4
+            generateOutput();
+        } else {
+            nextBtn.style.display = 'block';
+            nextBtn.innerText = (step === totalSteps - 1) ? 'สรุปผลงาน 🏁' : 'ถัดไป ➡';
+            finalBtns.style.display = 'none';
+            printWrapper.style.display = 'none';
+        }
+        document.getElementById('page-indicator').innerText = `${step} / ${totalSteps}`;
+    }
+
+    function nextStep() { if (currentStep < totalSteps) { currentStep++; showStep(currentStep); } }
+    function prevStep() { if (currentStep > 1) { currentStep--; showStep(currentStep); } }
+
+    function generateOutput() {
+        const ids = ['persona', 'see', 'hear', 'do', 'say', 'pain-problem', 'pain-impact', 'pain-root', 'gain-need', 'gain-level', 'gain-benefit', 'plant', 'm', 'p', 'b', 'idea-name', 'concept'];
+        ids.forEach(id => {
+            const el = document.getElementById(`out-${id}`);
+            const val = document.getElementById(`inp-${id}`).value;
+            if(el) el.innerText = val || '-';
+        });
+
+        const sketchSrc = document.getElementById('sketch-preview').src;
+        const outSketchImg = document.getElementById('out-sketch-img');
+        const outSketchText = document.getElementById('out-sketch-text');
+        if (sketchSrc && document.getElementById('inp-sketch').files.length > 0) {
+            outSketchImg.src = sketchSrc; outSketchImg.style.display = 'block'; outSketchText.style.display = 'none';
+        } else {
+            outSketchImg.style.display = 'none'; outSketchText.style.display = 'block';
+        }
+
+        const nameSpan = document.getElementById('out-name');
+        if(nameSpan.innerText === '_________________') {
+             const studentName = prompt("กรุณากรอกชื่อ-สกุล เพื่อแสดงบนใบงาน:", "");
+             if(studentName) nameSpan.innerText = studentName;
+        }
+    }
+
+    function saveAsImage() {
+        const element = document.getElementById('a4-target');
+        html2canvas(element, {
+            scale: 2, backgroundColor: "#ffffff", useCORS: true, windowWidth: 1200,
+            onclone: (clonedDoc) => { clonedDoc.getElementById('a4-target').style.margin = "0 auto"; }
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Eco-Innovation-Worksheet.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>

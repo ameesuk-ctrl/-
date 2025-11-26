@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบงาน Empathy Map</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 1. นำเข้า Library html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #3F51B5;
+            --secondary-color: #7986CB;
+            --bg-color: #E8EAF6; 
+            --border-color: #C5CAE9;
+            --text-color: #263238;
+            --highlight-pain: #FFEBEE;
+            --highlight-gain: #E8F5E9;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eceff1;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .page-container {
+            width: 210mm; /* A4 Size */
+            min-height: 297mm;
+            background: white;
+            margin: 0 auto;
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Persona Section */
+        .persona-section {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--secondary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .persona-icon {
+            font-size: 40px;
+            background: white;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+        }
+
+        .persona-inputs {
+            width: 100%;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box; /* Fix width overflow */
+        }
+
+        /* Grid Layout */
+        .empathy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .map-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            background: white;
+        }
+
+        .map-header {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            resize: none;
+        }
+
+        textarea:focus {
+            outline: none;
+            border: 1px solid var(--primary-color);
+            background-color: #f9f9f9;
+        }
+
+        /* Internal Section */
+        .internal-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .pain-box {
+            background-color: var(--highlight-pain);
+            border: 1px solid #E57373;
+        }
+
+        .gain-box {
+            background-color: var(--highlight-gain);
+            border: 1px solid #81C784;
+        }
+
+        .box-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        /* Footer */
+        .summary-footer {
+            margin-top: 20px;
+            border-top: 2px dashed var(--border-color);
+            padding-top: 15px;
+        }
+
+        .summary-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        /* Action Buttons Container */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Sarabun', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-print {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-save {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+        /* Loading Overlay */
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .page-container { box-shadow: none; margin: 0; padding: 20px; width: 100%; }
+            .action-buttons { display: none; }
+            textarea { border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Indicator -->
+    <div id="loading">กำลังสร้างไฟล์รูปภาพ...</div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์ใบงาน</button>
+        <button class="btn btn-save" onclick="saveAsImage()">🖼️ บันทึกเป็นภาพ</button>
+    </div>
+
+    <!-- Target Container ID added for selection -->
+    <div class="page-container" id="capture-target">
+        <header>
+            <div>
+                <h1>ใบงาน: Empathy Map</h1>
+                <div class="sub-text">แผนภาพทำความเข้าใจผู้ใช้เพื่อค้นหาปัญหาที่แท้จริง</div>
+            </div>
+            <div style="text-align: right; font-size: 14px;">
+                <div style="margin-bottom: 5px;">ชื่อกลุ่ม: <input type="text" style="width: 150px; border:none; border-bottom:1px dashed #ccc; padding:0;"></div>
+                <div>วันที่: <input type="text" style="width: 150px; border:none; border-bottom:1px dashed #ccc; padding:0;"></div>
+            </div>
+        </header>
+
+        <div class="persona-section">
+            <div class="persona-icon">👤</div>
+            <div class="persona-inputs">
+                <div class="form-row">
+                    <div style="flex: 1;">
+                        <label style="font-weight: bold; font-size: 14px;">WHO: ผู้ใช้งานเป้าหมาย (Persona)</label>
+                        <input type="text" placeholder="เช่น แม่ค้าขายอาหารริมคลอง, ชาวประมงพื้นบ้าน">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="font-weight: bold; font-size: 14px;">GOAL: เป้าหมาย/สิ่งที่ต้องทำ (Need to do)</label>
+                        <input type="text" placeholder="เช่น ต้องการจัดการน้ำเสียให้ได้มาตรฐาน">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="empathy-grid">
+            <div class="map-box">
+                <div class="map-header">👀 1. SEE (สิ่งที่เห็น)</div>
+                <div class="box-label">สภาพแวดล้อม สิ่งที่เกิดขึ้นรอบตัว ปัญหาที่มองเห็น</div>
+                <textarea placeholder="ผู้ใช้เห็นอะไรในชีวิตประจำวัน? (เช่น น้ำคลองสีดำ, เห็นเพื่อนบ้านเทน้ำทิ้ง, เห็นข่าวสิ่งแวดล้อม)"></textarea>
+            </div>
+
+            <div class="map-box">
+                <div class="map-header">👂 2. HEAR (สิ่งที่ได้ยิน)</div>
+                <div class="box-label">สิ่งที่คนอื่นพูด ข่าวลือ คำวิจารณ์ หรือคำแนะนำ</div>
+                <textarea placeholder="ผู้ใช้ได้ยินอะไรมา? (เช่น ได้ยินว่าค่าปรับแพง, ได้ยินว่าสารเคมีอันตราย, เพื่อนบ่นเรื่องกลิ่น)"></textarea>
+            </div>
+
+            <div class="map-box">
+                <div class="map-header">🗣️ 3. SAY (สิ่งที่พูด)</div>
+                <div class="box-label">สิ่งที่ผู้ใช้พูดออกมา บ่น หรือบอกคนอื่น</div>
+                <textarea placeholder="คำพูดติดปาก หรือ Quote ของผู้ใช้ (เช่น 'อยากช่วยโลกนะ แต่ไม่มีเงิน', 'ทำไมเทศบาลไม่มาดูแล')"></textarea>
+            </div>
+
+            <div class="map-box">
+                <div class="map-header">✋ 4. DO (สิ่งที่ทำ)</div>
+                <div class="box-label">พฤติกรรมที่ทำจริงในปัจจุบัน (อาจขัดแย้งกับสิ่งที่พูด)</div>
+                <textarea placeholder="การกระทำจริง (เช่น แอบเทน้ำตอนดึก, พยายามตักไขมันแต่ไม่สม่ำเสมอ)"></textarea>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 10px; font-size: 18px; color: var(--text-color);">ภายในจิตใจ (Think & Feel)</h3>
+        <div class="internal-section">
+            <div class="map-box pain-box">
+                <div class="map-header" style="color: #D32F2F;">🌩️ 5. PAIN (ความเจ็บปวด/กังวล)</div>
+                <div class="box-label">ความกลัว อุปสรรค ความเสี่ยง</div>
+                <textarea style="background: rgba(255,255,255,0.5);" placeholder="เขากังวลเรื่องอะไร? (เช่น กลัวโดนปรับ, กลัวลูกหลานป่วย, กลัวต้นทุนสูง)"></textarea>
+            </div>
+
+            <div class="map-box gain-box">
+                <div class="map-header" style="color: #388E3C;">🌈 6. GAIN (ความต้องการ/ความหวัง)</div>
+                <div class="box-label">ความต้องการที่แท้จริง ประโยชน์ที่อยากได้</div>
+                <textarea style="background: rgba(255,255,255,0.5);" placeholder="เขาต้องการอะไรที่สุด? (เช่น วิธีที่ประหยัดและง่าย, ชุมชนสะอาดขึ้น, ได้รับคำชม)"></textarea>
+            </div>
+        </div>
+
+        <div class="summary-footer">
+            <div class="summary-title">💡 สรุป Insight สำคัญ (Big Discovery):</div>
+            <textarea style="height: 60px;" placeholder="สรุปสั้นๆ: ปัญหาที่แท้จริงไม่ใช่..... แต่เป็น....."></textarea>
+        </div>
+    </div>
+
+    <script>
+        function saveAsImage() {
+            // แสดง Loading
+            document.getElementById('loading').style.display = 'flex';
+
+            const element = document.getElementById('capture-target');
+
+            // ใช้ html2canvas จับภาพ
+            html2canvas(element, {
+                scale: 2, // เพิ่มความละเอียดภาพ (2x) เพื่อให้ตัวหนังสือชัดเจน
+                useCORS: true, // อนุญาตให้โหลดฟอนต์หรือรูปข้ามโดเมนได้
+                backgroundColor: "#ffffff" // บังคับพื้นหลังสีขาว
+            }).then(canvas => {
+                // สร้างลิงก์ดาวน์โหลด
+                const link = document.createElement('a');
+                link.download = 'empathy-map.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                // ซ่อน Loading
+                document.getElementById('loading').style.display = 'none';
+            }).catch(err => {
+                console.error("เกิดข้อผิดพลาดในการบันทึกภาพ:", err);
+                alert("ไม่สามารถบันทึกภาพได้");
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    </script>
+
+</body>
+</html>

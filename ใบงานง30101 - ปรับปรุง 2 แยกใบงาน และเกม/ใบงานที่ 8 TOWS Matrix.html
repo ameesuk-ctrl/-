@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบงานที่ 8: TOWS Matrix (Mobile Friendly)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #4A148C; /* Strategic Purple */
+            --secondary-color: #7B1FA2;
+            --bg-color: #F3E5F5;
+            --border-color: #E1BEE7;
+            --text-color: #311B92;
+            
+            /* S/W/O/T Colors */
+            --s-color: #4CAF50; /* Green */
+            --w-color: #F44336; /* Red */
+            --o-color: #2196F3; /* Blue */
+            --t-color: #FF9800; /* Orange */
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #eceff1;
+            margin: 0;
+            padding: 20px;
+            color: #263238;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-container {
+            width: 210mm; /* A4 Size default */
+            min-height: 297mm;
+            background: white;
+            padding: 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+            line-height: 1.2;
+        }
+
+        .sub-text {
+            font-size: 14px;
+            color: #546E7A;
+        }
+        
+        h2 {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            border-left: 5px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        /* Part 1: Factor Analysis */
+        .factor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .factor-box {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        
+        .factor-header {
+            font-weight: bold;
+            font-size: 16px;
+            padding: 10px;
+            color: white;
+            text-align: center;
+        }
+        
+        .factor-s { background-color: var(--s-color); }
+        .factor-w { background-color: var(--w-color); }
+        .factor-o { background-color: var(--o-color); }
+        .factor-t { background-color: var(--t-color); }
+        
+        .factor-body {
+            padding: 10px;
+            min-height: 120px;
+            background: #fafafa;
+        }
+        
+        .factor-body textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px dashed #aaa;
+            background: white;
+            font-family: 'Sarabun', sans-serif;
+            padding: 5px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        /* Part 2: TOWS Matrix */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 100px 1fr 1fr;
+            grid-template-rows: auto;
+            border: 1px solid var(--primary-color);
+            margin-top: 15px;
+        }
+        
+        .matrix-cell {
+            padding: 10px;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-internal {
+            grid-column: 2 / span 2;
+            text-align: center;
+            font-weight: bold;
+            background: var(--bg-color);
+            font-size: 14px;
+        }
+        
+        .header-external {
+            grid-row: 2 / span 3; /* ปรับให้ครอบคลุมแถว */
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+            font-weight: bold;
+            background: var(--bg-color);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-s, .header-w, .header-o, .header-t {
+            text-align: center; 
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-s { color: var(--s-color); }
+        .header-w { color: var(--w-color); }
+        .header-o { color: var(--o-color); }
+        .header-t { color: var(--t-color); }
+
+        .strategy-box {
+            min-height: 150px;
+            background: white;
+        }
+        
+        .strategy-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .strategy-prompt {
+            font-size: 12px;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        
+        .strategy-box textarea {
+            width: 100%;
+            height: 100px;
+            border: 1px dashed #aaa;
+            font-family: 'Sarabun', sans-serif;
+            padding: 5px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        
+        /* Reflection */
+        .reflection-section {
+            margin-top: 30px;
+            border-top: 2px dashed var(--border-color);
+            padding-top: 15px;
+        }
+
+        /* Action Buttons (Floating) */
+        .action-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Sarabun', sans-serif;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+        .btn-print { background-color: var(--primary-color); }
+        .btn-image { background-color: #7B1FA2; }
+
+        /* =========================================
+           MOBILE RESPONSIVE FIX (ส่วนที่เพิ่มใหม่)
+           ========================================= */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+                background-color: #f5f5f5;
+            }
+
+            .page-container {
+                width: 100%;
+                min-height: auto;
+                padding: 15px;
+                margin: 0;
+                box-shadow: none;
+            }
+
+            /* Header ปรับให้เล็กลง */
+            h1 { font-size: 20px; }
+            .sub-text { font-size: 12px; }
+
+            /* ปรับส่วนที่ 1 เรียงลงมาแนวตั้ง */
+            .factor-grid {
+                grid-template-columns: 1fr; /* คอลัมน์เดียว */
+                gap: 10px;
+            }
+
+            /* ปรับ Matrix (ส่วนที่ยากที่สุด) ให้เป็น Card เรียงลงมา */
+            .matrix-container {
+                display: flex;
+                flex-direction: column;
+                border: none;
+            }
+
+            /* ซ่อนหัวตารางแบบ Grid เดิม เพราะดูยากบนมือถือ */
+            .header-internal, .header-external, 
+            .header-s, .header-w, .header-o, .header-t {
+                display: none;
+            }
+
+            .matrix-cell.strategy-box {
+                border: 1px solid #ddd;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            }
+            
+            /* ปรับขนาดช่องพิมพ์ให้ใหญ่ขึ้น จิ้มง่าย */
+            textarea {
+                font-size: 16px !important; /* ป้องกัน iOS ซูมเอง */
+                min-height: 120px;
+            }
+
+            .action-buttons {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+        }
+
+        /* =========================================
+           PRINT STYLES (สำหรับสั่งพิมพ์ให้เป็น A4 เหมือนเดิม)
+           ========================================= */
+        @media print {
+            body { background: white; padding: 0; display: block; }
+            .page-container { 
+                box-shadow: none; 
+                margin: 0; 
+                padding: 15mm; 
+                width: 210mm; /* บังคับ A4 ตอนพิมพ์ */
+                height: auto;
+            }
+            .action-buttons { display: none; }
+            
+            /* คืนค่า Grid สำหรับการพิมพ์ */
+            .factor-grid { grid-template-columns: 1fr 1fr; }
+            .matrix-container { 
+                display: grid;
+                grid-template-columns: 80px 1fr 1fr;
+                grid-template-rows: auto;
+                border: 1px solid var(--primary-color);
+            }
+            
+            /* แสดงหัวตารางตอนพิมพ์ */
+            .header-internal, .header-external, 
+            .header-s, .header-w, .header-o, .header-t {
+                display: flex !important; /* บังคับแสดง */
+            }
+            
+            .matrix-cell { border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-radius: 0; margin: 0; box-shadow: none; }
+            
+            textarea { font-size: 12px; border: none; resize: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-buttons">
+        <button class="btn btn-print" onclick="window.print()">
+            🖨️ PDF / พิมพ์
+        </button>
+        <button class="btn btn-image" onclick="saveAsImage()">
+            📸 บันทึกรูป
+        </button>
+    </div>
+
+    <div class="page-container" id="capture-target">
+        <header>
+            <div>
+                <h1>ใบงานที่ 8: TOWS Matrix</h1>
+                <div class="sub-text">การวิเคราะห์กลยุทธ์เพื่อความยั่งยืนของโครงการ</div>
+            </div>
+            <div style="margin-top: 15px; font-size: 14px;">
+                <div style="margin-bottom:5px;"><strong>กลุ่มที่:</strong> <input type="text" style="border:none; border-bottom:1px dotted #000; width: 100px; font-family:'Sarabun';"></div>
+                <div><strong>นวัตกรรม:</strong> <input type="text" style="border:none; border-bottom:1px dotted #000; width: 200px; font-family:'Sarabun';"></div>
+            </div>
+        </header>
+
+        <section>
+            <h2>ส่วนที่ 1: การวิเคราะห์ปัจจัย (SWOT)</h2>
+            <p style="font-size: 13px; color: #666;">ระดมสมองปัจจัยภายใน (S,W) และภายนอก (O,T)</p>
+            
+            <div class="factor-grid">
+                <div class="factor-box">
+                    <div class="factor-header factor-s">💪 S - Strengths (จุดแข็ง)</div>
+                    <div class="factor-body">
+                        <textarea placeholder="1. จุดแข็งของเราคือ...&#10;2. ทรัพยากรที่เรามี..."></textarea>
+                    </div>
+                </div>
+                <div class="factor-box">
+                    <div class="factor-header factor-w">📉 W - Weaknesses (จุดอ่อน)</div>
+                    <div class="factor-body">
+                        <textarea placeholder="1. สิ่งที่ยังขาด...&#10;2. ข้อจำกัดของเรา..."></textarea>
+                    </div>
+                </div>
+                <div class="factor-box">
+                    <div class="factor-header factor-o">☀️ O - Opportunities (โอกาส)</div>
+                    <div class="factor-body">
+                        <textarea placeholder="1. เทรนด์ที่กำลังมา...&#10;2. การสนับสนุนภายนอก..."></textarea>
+                    </div>
+                </div>
+                <div class="factor-box">
+                    <div class="factor-header factor-t">🌩️ T - Threats (อุปสรรค)</div>
+                    <div class="factor-body">
+                        <textarea placeholder="1. คู่แข่ง...&#10;2. เศรษฐกิจ/กฎระเบียบ..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>ส่วนที่ 2: การกำหนดกลยุทธ์ (TOWS)</h2>
+            <p style="font-size: 13px; color: #666;">จับคู่ปัจจัยเพื่อสร้างกลยุทธ์ (บนมือถือจะแสดงเป็นรายการเรียงลงมา)</p>
+            
+            <div class="matrix-container">
+                <div class="matrix-cell"></div>
+                <div class="matrix-cell header-internal">ปัจจัยภายใน (Internal)</div>
+                <div class="matrix-cell header-s">S - Strengths (จุดแข็ง)</div>
+                <div class="matrix-cell header-w">W - Weaknesses (จุดอ่อน)</div>
+                
+                <div class="matrix-cell header-external">ปัจจัยภายนอก (External)</div>
+                <div class="matrix-cell header-o">O - Opportunities (โอกาส)</div>
+                
+                <div class="matrix-cell strategy-box">
+                    <div class="strategy-title" style="color: var(--s-color); border-bottom: 1px solid #eee; padding-bottom:5px; margin-bottom:5px;">
+                        🚀 SO: กลยุทธ์เชิงรุก (ใช้ S จับ O)
+                    </div>
+                    <p class="strategy-prompt">ใช้จุดแข็งคว้าโอกาสอย่างไร?</p>
+                    <textarea placeholder="ตอบ: ..."></textarea>
+                </div>
+                
+                <div class="matrix-cell strategy-box">
+                    <div class="strategy-title" style="color: var(--o-color); border-bottom: 1px solid #eee; padding-bottom:5px; margin-bottom:5px;">
+                        🛠️ WO: กลยุทธ์เชิงแก้ไข (ใช้ O แก้ W)
+                    </div>
+                    <p class="strategy-prompt">ใช้โอกาสมาช่วยลบจุดอ่อนอย่างไร?</p>
+                    <textarea placeholder="ตอบ: ..."></textarea>
+                </div>
+
+                <div class="matrix-cell header-t">T - Threats (อุปสรรค)</div>
+                
+                <div class="matrix-cell strategy-box">
+                    <div class="strategy-title" style="color: var(--t-color); border-bottom: 1px solid #eee; padding-bottom:5px; margin-bottom:5px;">
+                        🛡️ ST: กลยุทธ์เชิงป้องกัน (ใช้ S สู้ T)
+                    </div>
+                    <p class="strategy-prompt">ใช้จุดแข็งรับมืออุปสรรคอย่างไร?</p>
+                    <textarea placeholder="ตอบ: ..."></textarea>
+                </div>
+                
+                <div class="matrix-cell strategy-box">
+                    <div class="strategy-title" style="color: var(--w-color); border-bottom: 1px solid #eee; padding-bottom:5px; margin-bottom:5px;">
+                        ⚠️ WT: กลยุทธ์เชิงรับ (หนี W หลบ T)
+                    </div>
+                    <p class="strategy-prompt">ทำอย่างไรให้รอดจากจุดอ่อนและอุปสรรคพร้อมกัน?</p>
+                    <textarea placeholder="ตอบ: ..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <section class="reflection-section">
+            <h2>💭 Mini-Reflection (ประเมินผล)</h2>
+            <p style="font-size: 13px; margin-bottom: 5px;">
+                กลยุทธ์ใดที่กลุ่มคิดว่า <strong>"สำคัญที่สุด"</strong> และต้องทำทันที?
+            </p>
+            <textarea style="width: 100%; height: 80px; border: 1px solid #ccc; padding: 8px; background: #fafafa; border-radius: 4px; font-family: 'Sarabun';" placeholder="ตอบ: ..."></textarea>
+        </section>
+        
+    </div>
+
+    <script>
+        function saveAsImage() {
+            // ซ่อนปุ่มชั่วคราว
+            document.querySelector('.action-buttons').style.display = 'none';
+            
+            const element = document.getElementById('capture-target');
+            
+            // ตรวจสอบว่าเป็นมือถือหรือไม่ ถ้าใช่ให้เตือนหน่อยเพราะไฟล์ภาพอาจจะยาว
+            const isMobile = window.innerWidth <= 768;
+            
+            html2canvas(element, {
+                scale: isMobile ? 2 : 2, // ความคมชัด
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                windowWidth: isMobile ? 1000 : null // บังคับความกว้างให้เหมือน Desktop ตอน Save ภาพ แม้จะเปิดในมือถือ (Trick)
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'TOWS-Matrix-Worksheet.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // แสดงปุ่มกลับมา
+                document.querySelector('.action-buttons').style.display = 'flex';
+            }).catch(err => {
+                console.error("Error:", err);
+                alert("เกิดข้อผิดพลาด ลองแคปหน้าจอแทนนะครับ");
+                document.querySelector('.action-buttons').style.display = 'flex';
+            });
+        }
+    </script>
+
+</body>
+</html>

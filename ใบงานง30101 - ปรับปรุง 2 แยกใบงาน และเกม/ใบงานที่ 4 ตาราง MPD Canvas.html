@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบงานที่ 4: ตาราง MPD Canvas</title>
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #2C5F2D; /* Mangrove Green */
+            --secondary-color: #97BC62;
+            --accent-color: #F0F7EE;
+            --border-color: #ccc;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #e0e0e0;
+            color: var(--text-color);
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px 20px;
+            
+            /* --- FIX: FORCE SCROLL ON MOBILE --- */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* บังคับให้ Body กว้างอย่างน้อยเท่า A4 เพื่อให้เกิด Scrollbar แนวนอนบนมือถือ */
+            min-width: 210mm; 
+        }
+
+        /* พื้นที่กระดาษ A4 */
+        #capture-target {
+            /* --- FIX: FIXED WIDTH --- */
+            width: 210mm; /* ใช้ width แทน max-width เพื่อล็อกขนาด */
+            min-height: 297mm;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            position: relative;
+            
+            /* ป้องกันไม่ให้ Flexbox บีบย่อขนาด */
+            flex-shrink: 0; 
+        }
+
+        /* Header Section */
+        header h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            margin-top: 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: var(--accent-color);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .form-group { margin-bottom: 5px; }
+
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        /* Section 1: Table */
+        h2 {
+            font-size: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-top: 0;
+        }
+
+        .instruction {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            table-layout: fixed; /* ล็อกขนาดคอลัมน์ */
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            vertical-align: top;
+            word-wrap: break-word; /* ตัดคำอัตโนมัติ */
+        }
+
+        th {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .col-type { width: 15%; background-color: #e8f5e9; font-weight: bold; }
+        .col-desc { width: 25%; font-size: 13px; color: #555; }
+        .col-input { width: 35%; }
+        .col-source { width: 25%; }
+
+        textarea.cell-input {
+            width: 100%;
+            height: 100px;
+            border: 1px dashed #aaa;
+            resize: none; /* ปิดการดึงขยายเองเพื่อความสวยงาม */
+            font-family: 'Sarabun', sans-serif;
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+        /* Section 2: Reflection */
+        .reflection-box {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .reflection-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .reflection-input {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #fffcf0;
+            font-family: 'Sarabun', sans-serif;
+            box-sizing: border-box;
+            resize: none;
+        }
+
+        /* Footer Note */
+        .footer-note {
+            border-top: 2px dashed var(--border-color);
+            padding-top: 15px;
+            font-size: 14px;
+            color: #444;
+            background-color: #f9f9f9;
+            padding: 15px;
+        }
+        
+        .footer-note strong { color: #d32f2f; }
+
+        /* Action Buttons (Floating) */
+        .action-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: 'Sarabun', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+        .btn-print { background-color: var(--primary-color); }
+        .btn-save { background-color: #1976D2; }
+
+        /* --- FIX: PRINT SETTINGS --- */
+        @media print {
+            @page { 
+                size: A4; 
+                margin: 0; /* ตัดขอบขาวของ Browser ทิ้ง */
+            }
+            body { 
+                background: white; 
+                padding: 0; 
+                display: block; 
+                min-width: auto; /* Reset ค่า min-width */
+            }
+            #capture-target { 
+                box-shadow: none; 
+                padding: 20px 25mm; /* จัด Padding ให้สวยงามตอนพิมพ์ */
+                width: 100%; 
+                margin: 0; 
+                border: none;
+            }
+            textarea, input { border: 1px solid #ccc; }
+            .action-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-bar">
+        <button class="btn btn-print" onclick="window.print()">🖨️ พิมพ์ / Save PDF</button>
+        <button class="btn btn-save" onclick="saveAsImage()">📸 บันทึกเป็นภาพ</button>
+    </div>
+
+    <div id="capture-target">
+        <header>
+            <h1>ใบงานที่ 4: ตาราง MPD Canvas</h1>
+        </header>
+
+        <div class="info-grid">
+            <div class="form-group">
+                <label>ชื่อกลุ่ม:</label>
+                <input type="text" placeholder="ระบุชื่อกลุ่ม...">
+            </div>
+            <div class="form-group">
+                <label>นวัตกรรมที่พัฒนา:</label>
+                <input type="text" placeholder="ระบุชื่อนวัตกรรม...">
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+                <label>Pain Point/ปัญหาหลัก (จาก Empathy Map):</label>
+                <input type="text" placeholder="ระบุปัญหาหลักที่ต้องการแก้ไข...">
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+                <label>ทรัพยากรธรรมชาติ/พืชที่สร้างแรงบันดาลใจ (จาก MPB Artifact):</label>
+                <input type="text" placeholder="ระบุชื่อพืชและส่วนที่นำมาใช้...">
+            </div>
+        </div>
+
+        <section>
+            <h2>ส่วนที่ 1: การกำหนดคุณลักษณะผลิตภัณฑ์ตาม MPD Framework</h2>
+            <p class="instruction">ให้นักเรียนระดมสมองเพื่อกำหนดคุณลักษณะ โดยเชื่อมโยงกับผลการวิเคราะห์ MPB และ Pain Points ของลูกค้า</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ประเภท (Kano)</th>
+                        <th>คำอธิบาย (ความหมาย)</th>
+                        <th>ฟังก์ชันของนวัตกรรม<br><small>(ระบุให้ชัดเจน)</small></th>
+                        <th>แรงบันดาลใจจาก<br><small>(Property/Behavior)</small></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-type">Must-Haves (M)<br><small>ต้องมี/ขาดไม่ได้</small></td>
+                        <td class="col-desc">สิ่งที่ลูกค้าคาดหวังพื้นฐาน หากไม่มีจะเกิดความไม่พอใจอย่างมาก</td>
+                        <td class="col-input"><textarea class="cell-input" placeholder="1. ...&#10;2. ..."></textarea></td>
+                        <td class="col-source"><textarea class="cell-input" placeholder="ระบุที่มา (ถ้ามี)"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="col-type">Performance (P)<br><small>ยิ่งมีมาก ยิ่งดี</small></td>
+                        <td class="col-desc">ความพึงพอใจเพิ่มขึ้นตามคุณภาพหรือปริมาณการใช้งาน</td>
+                        <td class="col-input"><textarea class="cell-input" placeholder="1. ...&#10;2. ..."></textarea></td>
+                        <td class="col-source"><textarea class="cell-input" placeholder="ระบุที่มา (ถ้ามี)"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="col-type">Delighters (D)<br><small>เกินคาดหวัง/ประทับใจ</small></td>
+                        <td class="col-desc">สิ่งที่ลูกค้าไม่ได้คาดหวัง แต่เมื่อได้รับแล้วจะพึงพอใจอย่างมาก (Wow Factor)</td>
+                        <td class="col-input"><textarea class="cell-input" placeholder="1. ...&#10;2. ..."></textarea></td>
+                        <td class="col-source"><textarea class="cell-input" placeholder="ระบุที่มา (Property/Behavior ของพืช)"></textarea></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>ส่วนที่ 2: Mini-Reflection (การสะท้อนคิด)</h2>
+            
+            <div class="reflection-box">
+                <div class="reflection-question">1. ในกระบวนการจัดกลุ่มคุณลักษณะตาม Kano Model (M, P, D) กลุ่มของคุณพบความท้าทายอย่างไรมากที่สุด?</div>
+                <textarea class="reflection-input" placeholder="คำตอบ: เช่น การตัดสินใจระหว่าง P กับ D..."></textarea>
+            </div>
+
+            <div class="reflection-box">
+                <div class="reflection-question">2. คุณลักษณะ Delighter ที่กลุ่มเลือกนั้น ได้แรงบันดาลใจมาจาก Property หรือ Behavior ใดของทรัพยากรธรรมชาติ และจะสร้างความประหลาดใจแก่ผู้ใช้ได้อย่างไร?</div>
+                <textarea class="reflection-input" placeholder="คำตอบ: ..."></textarea>
+            </div>
+        </section>
+
+        <footer class="footer-note">
+            <strong>หมายเหตุสำหรับนักเรียน:</strong>
+            <ul>
+                <li>Artifact ที่ต้องส่งในคาบนี้คือ: <u>ใบงานที่ 4 (ฉบับสมบูรณ์)</u> และ <u>Idea Artifact</u> (ในแอปฯ)</li>
+                <li>ให้นำข้อมูลจากตารางนี้ไปกรอกในแอปพลิเคชัน <strong>"Mangrove Explorer" (หน้า Creation Screen)</strong> เพื่อสร้าง Idea Artifact ให้ครบถ้วนตามที่ครูกำหนด</li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        function saveAsImage() {
+            const element = document.getElementById('capture-target');
+            
+            // --- FIX: FORCE DESKTOP RENDERING ---
+            // ใช้ windowWidth/Height เพื่อหลอก Library ว่าเราอยู่บนจอใหญ่
+            // ทำให้ Layout ไม่เพี้ยนเมื่อกดจากมือถือ
+            html2canvas(element, {
+                scale: 2, 
+                backgroundColor: "#ffffff", 
+                useCORS: true,
+                windowWidth: 1600, // *สำคัญ* บังคับความกว้าง Virtual Window
+                windowHeight: 1200,
+                scrollY: -window.scrollY // แก้ปัญหาภาพเลื่อนถ้ามีการ Scroll หน้าจอ
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'MPD-Canvas-Worksheet.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("เกิดข้อผิดพลาดในการบันทึกภาพ", err);
+                alert("ไม่สามารถบันทึกภาพได้ กรุณาลองใหม่อีกครั้ง");
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Model Canvas (Beautiful A4)</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. Global Settings --- */
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #525252; 
+            margin: 0; padding: 20px;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-width: 297mm; 
+        }
+
+        .page-container {
+            width: 297mm; 
+            height: 210mm; 
+            background: white;
+            padding: 10mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 2. BMC Grid Layout --- */
+        .bmc-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr); 
+            grid-template-rows: repeat(2, 2fr) 1fr; 
+            gap: 4px; /* เพิ่มช่องว่างเล็กน้อยให้เห็นพื้นหลังชัดขึ้น */
+            background-color: white; /* สีพื้นหลังของ Gap */
+            flex-grow: 1;
+            border: 1px solid #e5e7eb;
+        }
+
+        .bmc-block {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px; /* ลบมุมเล็กน้อยเพื่อความนุ่มนวล */
+            position: relative;
+        }
+        .bmc-block:hover { 
+            filter: brightness(0.95); /* เวลาเอาเมาส์ชี้ให้สีเข้มขึ้นนิดนึง */
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        /* --- 3. Color Coding Areas --- */
+        
+        /* Infrastructure (Backstage) - Blue Tones */
+        .area-kp { grid-column: 1 / span 2; grid-row: 1 / span 2; background-color: #F0F9FF; border: 1px solid #BAE6FD; }
+        .area-ka { grid-column: 3 / span 2; grid-row: 1 / span 1; background-color: #F0F9FF; border: 1px solid #BAE6FD; }
+        .area-kr { grid-column: 3 / span 2; grid-row: 2 / span 1; background-color: #F0F9FF; border: 1px solid #BAE6FD; }
+
+        /* Offer (Center Stage) - Red/Pink Tones */
+        .area-vp { grid-column: 5 / span 2; grid-row: 1 / span 2; background-color: #FFF1F2; border: 1px solid #FECDD3; }
+
+        /* Customer (Frontstage) - Green Tones */
+        .area-cr { grid-column: 7 / span 2; grid-row: 1 / span 1; background-color: #F0FDF4; border: 1px solid #BBF7D0; }
+        .area-ch { grid-column: 7 / span 2; grid-row: 2 / span 1; background-color: #F0FDF4; border: 1px solid #BBF7D0; }
+        .area-cs { grid-column: 9 / span 2; grid-row: 1 / span 2; background-color: #F0FDF4; border: 1px solid #BBF7D0; }
+
+        /* Finance (Bottom Line) - Yellow/Orange Tones */
+        .area-cost { grid-column: 1 / span 5; grid-row: 3 / span 1; background-color: #FFFBEB; border: 1px solid #FDE68A; }
+        .area-rev  { grid-column: 6 / span 5; grid-row: 3 / span 1; background-color: #FFFBEB; border: 1px solid #FDE68A; }
+
+
+        /* --- Components --- */
+        .block-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;
+        }
+        .block-title { font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; }
+        .block-icon { opacity: 0.6; font-size: 14px; }
+        
+        .link-badge {
+            display: inline-block; font-size: 9px; font-weight: 600;
+            padding: 1px 6px; border-radius: 10px; margin-bottom: 6px;
+            background-color: rgba(255,255,255,0.8); 
+            color: #4B5563; border: 1px solid rgba(0,0,0,0.1);
+            width: fit-content; box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        }
+
+        .post-it {
+            background-color: #FEF3C7; /* Sticky Note Yellow */
+            padding: 6px 8px; 
+            border-radius: 2px;
+            font-size: 11px;
+            line-height: 1.4;
+            border-left: 3px solid #F59E0B;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            flex-grow: 1;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            color: #1F2937;
+        }
+        
+        .empty-placeholder {
+            color: #9CA3AF;
+            font-size: 10px;
+            font-style: italic;
+            margin-top: 8px;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Tools */
+        .floating-tools {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .btn-tool {
+            padding: 10px 20px; border-radius: 30px; color: white; font-weight: bold; border: none; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-family: 'Sarabun'; font-size: 13px; transition: transform 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-tool:hover { transform: scale(1.05); }
+
+        .header-input { border: none; border-bottom: 1px dashed #9CA3AF; width: 100%; outline: none; font-family: 'Sarabun'; background: transparent; font-size: 12px; padding: 2px 0; }
+        
+        @media print {
+            @page { size: A4 landscape; margin: 0; }
+            body { background: white; padding: 0; display: block; min-width: auto; -webkit-print-color-adjust: exact; }
+            .page-container { width: 100%; height: 100vh; box-shadow: none; margin: 0; padding: 5mm; }
+            .floating-tools { display: none; }
+            .post-it { overflow: hidden; border: 1px solid #ddd; }
+            /* Ensure background colors print */
+            .area-kp, .area-ka, .area-kr, .area-vp, .area-cr, .area-ch, .area-cs, .area-cost, .area-rev {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-tools">
+        <button id="toggleExampleButton" class="btn-tool bg-green-600 hover:bg-green-700">💡 ดูตัวอย่างสำเร็จรูป</button>
+        <button id="exportImageButton" class="btn-tool bg-blue-600 hover:bg-blue-700">📷 บันทึกรูปภาพ</button>
+        <button id="clearButton" class="btn-tool bg-red-500 hover:bg-red-600">🗑️ ล้างข้อมูล</button>
+    </div>
+
+    <div id="bmc-capture-area" class="page-container">
+        
+        <div class="mb-3 pb-2 border-b-2 border-gray-800 flex items-end justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 leading-none tracking-tight">Business Model Canvas</h1>
+                <p class="text-[10px] text-gray-500 mt-1 font-medium">Integrated Worksheet for Innovation Project</p>
+            </div>
+            <div class="flex gap-6 w-2/3">
+                <div class="flex-1">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Designed For:</label>
+                    <input type="text" id="businessNameInput" class="header-input" placeholder="ระบุชื่อธุรกิจ...">
+                </div>
+                <div class="flex-1">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Designed By:</label>
+                    <input type="text" id="teamNameInput" class="header-input" placeholder="ระบุชื่อทีม...">
+                </div>
+                <div class="w-24">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Date:</label>
+                    <input type="text" id="versionInput" class="header-input" placeholder="วว/ดด/ปป">
+                </div>
+            </div>
+        </div>
+
+        <div class="bmc-grid">
+            
+            <div class="bmc-block area-kp" data-id="kp">
+                <div class="block-header">
+                    <div class="block-title">8. Key Partners</div>
+                    <span class="block-icon">🔗</span>
+                </div>
+                <div class="link-badge">SIPOC (Supplier)</div>
+                <div class="post-it hidden" id="post-it-kp"></div>
+                <div class="empty-placeholder" id="ph-kp">ใครช่วยเรา?</div>
+            </div>
+
+            <div class="bmc-block area-ka" data-id="ka">
+                <div class="block-header">
+                    <div class="block-title">7. Key Activities</div>
+                    <span class="block-icon">⚙️</span>
+                </div>
+                <div class="link-badge">TQC (Process)</div>
+                <div class="post-it hidden" id="post-it-ka"></div>
+                <div class="empty-placeholder" id="ph-ka">ทำอะไรบ้าง?</div>
+            </div>
+
+            <div class="bmc-block area-kr" data-id="kr">
+                <div class="block-header">
+                    <div class="block-title">6. Key Resources</div>
+                    <span class="block-icon">📦</span>
+                </div>
+                <div class="link-badge">MPB / SIPOC</div>
+                <div class="post-it hidden" id="post-it-kr"></div>
+                <div class="empty-placeholder" id="ph-kr">ใช้อะไรบ้าง?</div>
+            </div>
+
+            <div class="bmc-block area-vp" data-id="vp">
+                <div class="block-header">
+                    <div class="block-title text-rose-700">1. Value Propositions</div>
+                    <span class="block-icon text-rose-500">🎁</span>
+                </div>
+                <div class="link-badge bg-white text-rose-600 border-rose-200">MPD / CER</div>
+                <div class="post-it hidden border-l-rose-500" id="post-it-vp"></div>
+                <div class="empty-placeholder" id="ph-vp">ดียังไง? แก้ปัญหาอะไร?</div>
+            </div>
+
+            <div class="bmc-block area-cr" data-id="cr">
+                <div class="block-header">
+                    <div class="block-title">4. Relationships</div>
+                    <span class="block-icon">❤️</span>
+                </div>
+                <div class="link-badge">Empathy (Feel)</div>
+                <div class="post-it hidden" id="post-it-cr"></div>
+                <div class="empty-placeholder" id="ph-cr">ดูแลอย่างไร?</div>
+            </div>
+
+            <div class="bmc-block area-ch" data-id="ch">
+                <div class="block-header">
+                    <div class="block-title">3. Channels</div>
+                    <span class="block-icon">🚚</span>
+                </div>
+                <div class="link-badge">TOWS (Opp)</div>
+                <div class="post-it hidden" id="post-it-ch"></div>
+                <div class="empty-placeholder" id="ph-ch">ส่งมอบทางไหน?</div>
+            </div>
+
+            <div class="bmc-block area-cs" data-id="cs">
+                <div class="block-header">
+                    <div class="block-title">2. Customer Segments</div>
+                    <span class="block-icon">👥</span>
+                </div>
+                <div class="link-badge">Empathy (Persona)</div>
+                <div class="post-it hidden" id="post-it-cs"></div>
+                <div class="empty-placeholder" id="ph-cs">ขายใคร?</div>
+            </div>
+
+            <div class="bmc-block area-cost" data-id="cost">
+                <div class="block-header">
+                    <div class="block-title">9. Cost Structure</div>
+                    <span class="block-icon">💸</span>
+                </div>
+                <div class="link-badge">TQC / RMI</div>
+                <div class="post-it hidden" id="post-it-cost"></div>
+                <div class="empty-placeholder" id="ph-cost">จ่ายค่าอะไรบ้าง?</div>
+            </div>
+
+            <div class="bmc-block area-rev" data-id="rev">
+                <div class="block-header">
+                    <div class="block-title">5. Revenue Streams</div>
+                    <span class="block-icon">💰</span>
+                </div>
+                <div class="link-badge">TOWS (Strategy)</div>
+                <div class="post-it hidden" id="post-it-rev"></div>
+                <div class="empty-placeholder" id="ph-rev">ได้เงินจากไหน?</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-95 opacity-0" id="modalContent">
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <span id="modalIcon"></span>
+                    <span id="modalTitle"></span>
+                </h3>
+                
+                <div class="bg-indigo-50 p-3 rounded-lg mb-4 border border-indigo-100">
+                    <p class="text-xs text-indigo-800 font-bold uppercase mb-1">💡 คำแนะนำ (Guide):</p>
+                    <p class="text-sm text-indigo-700 leading-relaxed" id="modalDescription"></p>
+                </div>
+
+                <div class="relative">
+                    <textarea id="modalTextarea" rows="6" class="w-full p-4 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none bg-gray-50 focus:bg-white transition-colors" placeholder=""></textarea>
+                    <div class="absolute bottom-2 right-2 text-[10px] text-gray-400 pointer-events-none">
+                        *พิมพ์ทับตัวอย่างได้เลย
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
+                <button id="modalCancel" class="px-5 py-2 rounded-full text-gray-600 hover:bg-gray-200 text-sm font-bold transition-colors">ยกเลิก</button>
+                <button id="modalSave" class="px-5 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 text-sm font-bold shadow-lg transition-transform active:scale-95">บันทึก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลและ Placeholder
+        const bmcDefinition = {
+            "kp": { 
+                title: "8. Key Partners", icon: "🔗",
+                desc: "ใครช่วยเราผลิต? ใครส่งวัตถุดิบ? Partner หลักคือใคร?",
+                placeholder: "- กลุ่มแม่บ้านเกษตรกร (ส่งสมุนไพร)\n- อบต. (สนับสนุนพื้นที่)\n- ร้านบรรจุภัณฑ์ (Supplier)"
+            },
+            "ka": { 
+                title: "7. Key Activities", icon: "⚙️",
+                desc: "กิจกรรมหลักที่ต้องทำเพื่อให้ได้สินค้าและบริการคืออะไร?",
+                placeholder: "- การเก็บเกี่ยวและตากแห้ง\n- กระบวนการสกัดสาร\n- การตรวจสอบคุณภาพ (QC)\n- การตลาดออนไลน์"
+            },
+            "kr": { 
+                title: "6. Key Resources", icon: "📦",
+                desc: "ทรัพยากรที่จำเป็นต้องมี (คน, เงิน, ของ) คืออะไร?",
+                placeholder: "- ใบเหงือกปลาหมอ 50 กก.\n- เครื่องปั่นและอัดขึ้นรูป\n- ทีมงานวิจัย 3 คน\n- เงินทุน 5,000 บาท"
+            },
+            "vp": { 
+                title: "1. Value Propositions", icon: "🎁",
+                desc: "สินค้าเราแก้ปัญหาอะไรให้ลูกค้า? ทำไมเขาต้องซื้อเรา?",
+                placeholder: "- ดูดซับสารพิษได้จริง 80% (มีผลแล็บ)\n- ผลิตจากธรรมชาติ 100% ย่อยสลายได้\n- ราคาถูกกว่าเคมี 20%\n- ใช้งานง่าย ไม่ต้องติดตั้งยุ่งยาก"
+            },
+            "cr": { 
+                title: "4. Relationships", icon: "❤️",
+                desc: "เราจะดูแลรักษาลูกค้าอย่างไรให้อยู่กับเรานานๆ?",
+                placeholder: "- มีแอดมินตอบเพจไวใน 1 ชม.\n- รับประกันสินค้า 7 วัน\n- มีกลุ่มไลน์ให้คำปรึกษาฟรี\n- ระบบสมาชิกสะสมแต้ม"
+            },
+            "ch": { 
+                title: "3. Channels", icon: "🚚",
+                desc: "ลูกค้าจะรู้จักและซื้อสินค้าเราได้ทางไหนบ้าง?",
+                placeholder: "- ฝากขายร้านวัสดุก่อสร้าง\n- Facebook Page / TikTok Shop\n- ออกบูธงาน OTOP"
+            },
+            "cs": { 
+                title: "2. Customer Segments", icon: "👥",
+                desc: "ใครคือลูกค้าคนสำคัญที่สุดของเรา?",
+                placeholder: "- ผู้นำชุมชนที่เจอปัญหาน้ำเสีย\n- โรงงาน SME ขนาดเล็ก\n- คนรุ่นใหม่หัวใจรักษ์โลก (Eco)"
+            },
+            "cost": { 
+                title: "9. Cost Structure", icon: "💸",
+                desc: "ต้นทุนหลักๆ ที่เราต้องจ่ายมีอะไรบ้าง?",
+                placeholder: "- ค่าวัตถุดิบ (ใบไม้, บรรจุภัณฑ์)\n- ค่าแรงงานผลิต\n- ค่าน้ำ ค่าไฟ\n- ค่าโฆษณาและการตลาด"
+            },
+            "rev": { 
+                title: "5. Revenue Streams", icon: "💰",
+                desc: "เราจะได้เงินจากทางไหนบ้าง? ราคาเท่าไหร่?",
+                placeholder: "- ขายปลีก (59 บาท/ชิ้น)\n- ขายส่ง (450 บาท/โหล)\n- ค่าบริการติดตั้งระบบ\n- ค่าวิทยากรบรรยาย"
+            }
+        };
+
+        const exampleData = {
+            "businessName": "CleanMangrove Innovation", "teamName": "Green Guardians", "version": "Draft 1.0",
+            "vp": "• แผ่นกรองจากเหงือกปลาหมอ\n• ดูดซับสารพิษได้จริง (CER Verified)\n• เป็นมิตรต่อสิ่งแวดล้อม",
+            "cs": "• ชุมชนริมคลอง\n• โรงงาน SME\n• หน่วยงานท้องถิ่น",
+            "ch": "• ขายตรงผู้นำชุมชน\n• ร้านวัสดุก่อสร้าง\n• Facebook Page",
+            "cr": "• สอนการใช้งานฟรี\n• รับซื้อคืนเมื่อหมดอายุ",
+            "rev": "• ขายปลีกแผ่นละ 50 บาท\n• ค่าบริการติดตั้งระบบ",
+            "kr": "• ใบเหงือกปลาหมอ (MPB)\n• เครื่องอัดขึ้นรูป",
+            "ka": "• เก็บเกี่ยวและตากแห้ง\n• สกัดสารแทนนิน\n• อัดขึ้นรูปแผ่นกรอง",
+            "kp": "• กลุ่มชาวบ้าน (เก็บใบไม้)\n• อบต. (สนับสนุนพื้นที่)",
+            "cost": "• ค่ารับซื้อใบไม้\n• ค่าไฟฟ้า/เครื่องจักร\n• ค่าการตลาด"
+        };
+
+        let bmcData = {};
+        let currentId = null;
+        let isExample = false;
+
+        function render() {
+            Object.keys(bmcDefinition).forEach(key => {
+                const text = bmcData[key];
+                const postIt = document.getElementById(`post-it-${key}`);
+                const ph = document.getElementById(`ph-${key}`);
+
+                if (text && text.trim() !== "") {
+                    postIt.textContent = text;
+                    postIt.classList.remove('hidden');
+                    if(ph) ph.classList.add('hidden');
+                } else {
+                    postIt.textContent = "";
+                    postIt.classList.add('hidden');
+                    if(ph) ph.classList.remove('hidden');
+                }
+            });
+            document.getElementById('businessNameInput').value = bmcData.businessName || "";
+            document.getElementById('teamNameInput').value = bmcData.teamName || "";
+            document.getElementById('versionInput').value = bmcData.version || "";
+        }
+
+        function saveData() {
+            if(!isExample) {
+                bmcData.businessName = document.getElementById('businessNameInput').value;
+                bmcData.teamName = document.getElementById('teamNameInput').value;
+                bmcData.version = document.getElementById('versionInput').value;
+                localStorage.setItem('bmc_color_data', JSON.stringify(bmcData));
+            }
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('bmc_color_data');
+            if(saved) bmcData = JSON.parse(saved);
+            render();
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal(id) {
+            if(isExample) return;
+            currentId = id;
+            const def = bmcDefinition[id];
+            
+            document.getElementById('modalTitle').textContent = def.title;
+            document.getElementById('modalIcon').textContent = def.icon;
+            document.getElementById('modalDescription').textContent = def.desc;
+            
+            const textarea = document.getElementById('modalTextarea');
+            textarea.value = bmcData[id] || "";
+            textarea.placeholder = def.placeholder;
+            
+            modal.classList.remove('hidden');
+            // Animation
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            textarea.focus();
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        document.querySelectorAll('.bmc-block').forEach(block => {
+            block.addEventListener('click', () => openModal(block.dataset.id));
+        });
+
+        document.getElementById('modalSave').addEventListener('click', () => {
+            if(currentId) {
+                bmcData[currentId] = document.getElementById('modalTextarea').value;
+                render(); saveData();
+                closeModal();
+            }
+        });
+        document.getElementById('modalCancel').addEventListener('click', closeModal);
+
+        ['businessNameInput', 'teamNameInput', 'versionInput'].forEach(id => {
+            document.getElementById(id).addEventListener('input', saveData);
+        });
+
+        document.getElementById('toggleExampleButton').addEventListener('click', (e) => {
+            isExample = !isExample;
+            if(isExample) {
+                bmcData = {...exampleData};
+                e.target.innerHTML = "❌ ปิดตัวอย่าง";
+                e.target.classList.replace('bg-green-600', 'bg-red-500');
+                e.target.classList.replace('hover:bg-green-700', 'hover:bg-red-600');
+            } else {
+                loadData();
+                e.target.innerHTML = "💡 ดูตัวอย่างสำเร็จรูป";
+                e.target.classList.replace('bg-red-500', 'bg-green-600');
+                e.target.classList.replace('hover:bg-red-600', 'hover:bg-green-700');
+            }
+            render();
+        });
+
+        document.getElementById('clearButton').addEventListener('click', () => {
+            if(confirm('ล้างข้อมูลทั้งหมด?')) {
+                localStorage.removeItem('bmc_color_data');
+                bmcData = {}; render();
+            }
+        });
+
+        document.getElementById('exportImageButton').addEventListener('click', () => {
+            const element = document.getElementById('bmc-capture-area');
+            html2canvas(element, { 
+                scale: 2,
+                backgroundColor: "#ffffff",
+                windowWidth: 2000,
+                windowHeight: 1200,
+                scrollY: -window.scrollY
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'BMC-A4-Color.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
